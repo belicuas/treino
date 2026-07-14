@@ -377,7 +377,7 @@
       </div>
 
       <div class="section-head" style="margin-top:1.5rem"><h2>Comparativo do mês 🏆</h2></div>
-      <div class="segmented">
+      <div class="segmented" id="compare-seg">
         <button class="seg active" onclick="switchCompareTab('volume')">Peso levantado</button>
         <button class="seg" onclick="switchCompareTab('idas')">Idas à academia</button>
         <button class="seg" onclick="switchCompareTab('peso')">Peso corporal</button>
@@ -1936,7 +1936,7 @@ function cwxSave(){
 let compareTab='volume';
 function switchCompareTab(tab){
   compareTab=tab;
-  document.querySelectorAll('#page-friends .seg').forEach((s,i)=>s.classList.toggle('active',['volume','idas','peso'][i]===tab));
+  document.querySelectorAll('#compare-seg .seg').forEach((s,i)=>s.classList.toggle('active',['volume','idas','peso'][i]===tab));
   renderCompare();
 }
 function monthStart(){const d=new Date();return new Date(d.getFullYear(),d.getMonth(),1).toISOString().split('T')[0];}
