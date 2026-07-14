@@ -624,8 +624,20 @@ async function pullAllGroups(){
 // envia um usuário para o Supabase (não bloqueia a UI)
 async function pushUser(username,data){
   if(!sb) return;
-  try{ await sb.from(TABLE).upsert({username,data,auth_id:data&&data.authId?data.authId:null,updated_at:new Date().toISOString()}); online=true; }
-  catch(e){ online=false; }
+  const authId = data&&data.authId ? data.authId : null;
+  try{
+    // tenta ATUALIZAR primeiro (coberto pela política "logados atualizam")
+    const {data:updated,error:upErr}=await sb.from(TABLE)
+      .update({data,auth_id:authId,updated_at:new Date().toISOString()})
+      .eq('username',username)
+      .select();
+    if(upErr) throw upErr;
+    // se não atualizou nenhuma linha, é uma conta nova -> INSERE
+    if(!updated || updated.length===0){
+      await sb.from(TABLE).insert({username,data,auth_id:authId,updated_at:new Date().toISOString()});
+    }
+    online=true;
+  }catch(e){ online=false; }
 }
 // puxa TODOS os usuários do Supabase para o cache local
 async function pullAllUsers(){
@@ -2055,12 +2067,17 @@ function adminCard(key,u){
     </div>
   </div>`;
 }
-function setUserStatus(email,status){
+async function setUserStatus(email,status){
   const users=getUsers();
   if(!users[email]) return;
   users[email].status=status;
   saveUsers(users);
-  pushUser(email,users[email]);
+  buildNav();
+  renderAdmin();
+  showToast(status==='approved'?'Aprovando...':status==='blocked'?'Atualizando...':'Atualizando...');
+  await pushUser(email,users[email]);
+  // confirma relendo do banco para garantir que persistiu
+  await pullAllUsers();
   buildNav();
   renderAdmin();
   showToast(status==='approved'?'Usuário aprovado ✓':status==='blocked'?'Usuário bloqueado':'Atualizado');
