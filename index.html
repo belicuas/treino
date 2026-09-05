@@ -557,16 +557,23 @@
 
 <script>
 /* ==========================================================================
-   ⚙️  CONFIGURAÇÃO — PREENCHA ESTAS 3 LINHAS
+   ⚙️  CONFIGURAÇÃO — PREENCHA ESTAS 2 LINHAS
    --------------------------------------------------------------------------
    1) SUPABASE_URL  -> Supabase: Settings > API > "Project URL"
    2) SUPABASE_KEY  -> Supabase: Settings > API > chave "anon public"
-   3) ADMIN_EMAIL   -> SEU email real. Quem se cadastrar com ele vira ADMIN.
+
+   Estas duas chaves são públicas por natureza: todo visitante recebe este
+   arquivo e consegue lê-las. Quem protege os dados é o RLS no banco
+   (ver sql/2-seguranca-rls.sql), não o segredo delas.
+   NUNCA coloque aqui a chave "service_role".
+
+   Quem é administrador é definido pela coluna "role" na tabela
+   fittrack_users, no banco — não por este arquivo. Para promover
+   alguém, use a aba Admin ou um UPDATE no SQL Editor.
    ========================================================================== */
 
 const SUPABASE_URL = 'https://ghtrwgdmbovlfmfzizbl.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdodHJ3Z2RtYm92bGZtZnppemJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5ODgxMzUsImV4cCI6MjA5OTU2NDEzNX0.ZuyPDmWZnwvVrCNUuAcXJuXcSrcZN-qDBbOjEoNTNO8';
-const ADMIN_EMAIL  = 'pedrobelicuas@gmail.com';
 
 /* ====== não precisa mexer daqui para baixo ====== */
 
@@ -873,9 +880,9 @@ async function doSignup(){
     }
     const authId=data.user?.id;
     // cria a linha de dados do usuário, ligada ao login (auth_id)
-    const role = (email===ADMIN_EMAIL) ? 'admin' : 'user';
-    const status = (email===ADMIN_EMAIL) ? 'approved' : 'pending';
-    const profile={name,email,role,status,authId,workouts:[],completedSessions:[],loads:{},weights:[],friends:[],coaches:[],students:[],coachRequests:[],coachRequestsSent:[]};
+    // papel e aprovação são decididos pelo banco (trigger + RLS): toda conta
+    // nova nasce user/pending, e o admin aprova pela aba Admin
+    const profile={name,email,role:'user',status:'pending',authId,workouts:[],completedSessions:[],loads:{},weights:[],friends:[],coaches:[],students:[],coachRequests:[],coachRequestsSent:[]};
     USERS[username]=profile; store.set('users',USERS);
     // grava no banco já com o auth_id (necessário para a regra de segurança)
     if(sb){ try{ await sb.from(TABLE).upsert({username,data:profile,auth_id:authId,updated_at:new Date().toISOString()}); }catch(e){} }

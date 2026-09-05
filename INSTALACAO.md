@@ -38,13 +38,14 @@ Menu lateral → **Settings** (engrenagem) → **API**. Copie:
 (Bloco de Notas, VS Code, qualquer um).
 
 **2.2** Logo no começo, procure o bloco "⚙️ CONFIGURAÇÃO".
-Preencha as 3 linhas:
+Preencha as 2 linhas:
 
     const SUPABASE_URL = 'https://SEU-PROJETO.supabase.co';   <- do passo 1.5
     const SUPABASE_KEY = 'eyJ...';                            <- do passo 1.5
-    const ADMIN_EMAIL  = 'seuemail@gmail.com';                <- SEU EMAIL REAL
 
-⚠️ Use um email REAL no ADMIN_EMAIL. Quem se cadastrar com ele vira administrador.
+Estas duas chaves são públicas por natureza — todo visitante recebe este
+arquivo e consegue lê-las. O que protege os dados é o RLS no banco, não o
+sigilo delas. **Nunca** coloque aqui a chave `service_role`.
 
 **2.3** Salve o arquivo.
 
@@ -85,8 +86,8 @@ Vai aparecer o link, algo como:
 
 **4.2** Clique em **"Criar conta"** e preencha:
 - Nome: seu nome
-- Nome de usuário: ex. `pedrobelicuas`
-- Email: **o mesmo do ADMIN_EMAIL** (passo 2.2)
+- Nome de usuário: como você quer ser chamado no app
+- Email: um email real (você vai precisar confirmá-lo)
 - Senha: a que você quiser (mín. 6 caracteres)
 
 **4.3** Pronto! Você entra como administrador (aba "Admin" na barra de baixo).

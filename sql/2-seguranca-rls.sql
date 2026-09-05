@@ -229,7 +229,7 @@ update fittrack_users
 set role   = 'admin',
     status = 'approved',
     data   = jsonb_set(jsonb_set(data,'{role}','"admin"',true),'{status}','"approved"',true)
-where lower(data->>'email') = lower('pedrobelicuas@gmail.com');
+where lower(data->>'email') = lower('SEU-EMAIL-AQUI@exemplo.com');
 
 -- Confira o resultado (deve listar você como admin/approved):
 select username, role, status, (auth_id is not null) as tem_login
