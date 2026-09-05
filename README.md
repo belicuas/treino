@@ -31,6 +31,25 @@ SQL Editor do Supabase:
 1. `1-schema-inicial.sql` — tabelas, RLS e as políticas originais
 2. `2-seguranca-rls.sql` — **correção de segurança** (ver abaixo)
 3. `3-corrigir-aprovacao.sql` — ajuste no fluxo de aprovação
+4. `4-perfil-automatico.sql` — cria o perfil no banco quando o login nasce
+
+## Cadastro e confirmação de email
+
+O perfil em `fittrack_users` é criado por um trigger em `auth.users`, não
+pelo navegador. Isso é o que permite exigir confirmação de email: com a
+confirmação ligada, o `signUp` não devolve sessão, o cliente continua
+como `anon`, e a gravação do perfil pelo app falharia — o usuário
+confirmaria o email, faria login e o app quebraria em `enterApp()` ao
+ler o nome de um perfil inexistente.
+
+Toda conta nova nasce `role=user` e `status=pending`, independentemente
+do que o cliente enviar. A aprovação é feita pela aba Admin.
+
+> **Atenção ao envio de emails.** O projeto usa o SMTP embutido do
+> Supabase, que serve para testes: o limite é de poucos emails por hora
+> e a entrega não é garantida (costuma cair em spam). Para cadastros de
+> verdade, configure um SMTP próprio em Authentication → Emails —
+> Resend e Brevo têm plano gratuito suficiente para este uso.
 
 ## Segurança
 
