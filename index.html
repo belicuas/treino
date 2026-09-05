@@ -218,6 +218,35 @@
   .status-approved{background:rgba(99,153,34,0.2);color:#97c459;}
   .status-blocked{background:rgba(255,107,107,0.15);color:var(--danger);}
 
+  /* HISTÓRICO DE TREINOS */
+  .hist-filter{width:100%;padding:10px 12px;margin-bottom:12px;background:var(--bg3);color:var(--text);
+    border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;}
+  .hist-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+    margin-bottom:10px;overflow:hidden;}
+  .hist-head{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;}
+  .hist-head:hover{background:rgba(255,255,255,0.02);}
+  .hist-title{flex:1;min-width:0;}
+  .hist-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .hist-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+  .hist-date{font-size:12px;color:var(--muted);text-align:right;white-space:nowrap;}
+  .hist-arrow{color:var(--muted);font-size:11px;transition:transform .15s;}
+  .hist-item.open .hist-arrow{transform:rotate(90deg);}
+  .hist-body{display:none;padding:0 14px 12px;border-top:1px solid var(--border);}
+  .hist-item.open .hist-body{display:block;}
+  .hist-ex{padding:10px 0;border-bottom:1px solid var(--border);}
+  .hist-ex:last-child{border-bottom:none;}
+  .hist-ex-head{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;}
+  .hist-ex-name{font-size:13px;font-weight:600;flex:1;}
+  .hist-ex-max{font-size:12px;color:var(--muted);}
+  .hist-sets{display:flex;flex-wrap:wrap;gap:6px;}
+  .hist-set{font-size:12px;background:var(--bg3);border:1px solid var(--border);
+    border-radius:var(--radius-sm);padding:4px 8px;color:var(--muted);}
+  .hist-set strong{color:var(--text);font-weight:600;}
+  .delta{font-size:11px;font-weight:600;padding:1px 6px;border-radius:99px;}
+  .delta-up{background:rgba(99,153,34,0.2);color:#97c459;}
+  .delta-down{background:rgba(255,107,107,0.15);color:var(--danger);}
+  .delta-same{background:rgba(255,255,255,0.06);color:var(--muted);}
+
   /* SEGMENTED */
   .segmented{display:flex;gap:4px;background:var(--bg3);border-radius:var(--radius-sm);padding:4px;margin-bottom:16px;}
   .seg{flex:1;padding:8px;text-align:center;font-size:13px;cursor:pointer;border-radius:6px;color:var(--muted);border:none;background:transparent;}
@@ -315,6 +344,11 @@
     <div class="segmented">
       <button class="seg active" onclick="switchProgressTab('carga')">Carga (kg)</button>
       <button class="seg" onclick="switchProgressTab('peso')">Peso corporal</button>
+      <button class="seg" onclick="switchProgressTab('historico')">Histórico</button>
+    </div>
+    <div id="progress-historico" style="display:none">
+      <select class="hist-filter" id="hist-filter" onchange="renderHistorico()"></select>
+      <div id="hist-list"></div>
     </div>
     <div id="progress-carga">
       <div class="exercise-pills" id="exercise-pills"></div>
@@ -1373,9 +1407,122 @@ function saveWorkout(){
 
 // ===== PROGRESSO: gráficos SVG =====
 function switchProgressTab(tab){
-  document.querySelectorAll('#page-progress .seg').forEach((s,i)=>s.classList.toggle('active',(i===0?'carga':'peso')===tab));
-  document.getElementById('progress-carga').style.display=tab==='carga'?'':'none';
-  document.getElementById('progress-peso').style.display=tab==='peso'?'':'none';
+  const tabs=['carga','peso','historico'];
+  document.querySelectorAll('#page-progress .seg').forEach((s,i)=>s.classList.toggle('active',tabs[i]===tab));
+  document.getElementById('progress-carga').style.display    = tab==='carga'?'':'none';
+  document.getElementById('progress-peso').style.display     = tab==='peso'?'':'none';
+  document.getElementById('progress-historico').style.display= tab==='historico'?'':'none';
+  if(tab==='historico') renderHistorico();
+}
+
+// ===== HISTÓRICO DE TREINOS =====
+// Os detalhes (exercícios, séries, reps e carga) já eram gravados em cada
+// sessão desde sempre — só não havia tela para lê-los.
+let histAbertos={};   // sid -> aberto?
+
+function histSessoes(){
+  const data=getUserData(currentUser());
+  return (data.completedSessions||[]).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+}
+
+// para cada exercício de cada sessão, a carga máxima e quanto mudou desde
+// a última vez que aquele exercício foi feito
+function histCalcula(sessoes){
+  const ultimo={}, meta={};
+  sessoes.forEach(s=>{
+    const m={};
+    (s.exercises||[]).forEach(ex=>{
+      const kgs=(ex.sets||[]).map(x=>Number(x.kg)||0);
+      const max=kgs.length?Math.max(...kgs):0;
+      m[ex.name]={max, delta: (max>0 && ultimo[ex.name]!==undefined) ? Math.round((max-ultimo[ex.name])*10)/10 : null};
+      if(max>0) ultimo[ex.name]=max;
+    });
+    meta[s.sid||s.date]=m;
+  });
+  return meta;
+}
+
+function histDataLabel(d){
+  if(!d) return '';
+  const hoje=todayStr();
+  if(d===hoje) return 'Hoje';
+  const ontem=new Date(); ontem.setDate(ontem.getDate()-1);
+  if(d===ontem.toISOString().split('T')[0]) return 'Ontem';
+  return fmtDate(d);
+}
+
+function renderHistorico(){
+  const sessoes=histSessoes();
+  const meta=histCalcula(sessoes);
+  const lista=sessoes.slice().reverse();   // mais recente primeiro
+
+  // filtro por treino
+  const nomes=[...new Set(sessoes.map(s=>s.workoutName).filter(Boolean))].sort();
+  const sel=document.getElementById('hist-filter');
+  const escolhido=sel.value||'__todos';
+  sel.innerHTML=`<option value="__todos">Todos os treinos (${sessoes.length})</option>`+
+    nomes.map(n=>{
+      const qtd=sessoes.filter(s=>s.workoutName===n).length;
+      return `<option value="${n.replace(/"/g,'&quot;')}">${n} (${qtd})</option>`;
+    }).join('');
+  sel.value=nomes.includes(escolhido)?escolhido:'__todos';
+
+  const filtradas=sel.value==='__todos'?lista:lista.filter(s=>s.workoutName===sel.value);
+
+  if(!filtradas.length){
+    document.getElementById('hist-list').innerHTML=
+      '<div style="font-size:13px;color:var(--muted);padding:10px 0">Nenhum treino registrado ainda. Finalize um treino para ele aparecer aqui.</div>';
+    return;
+  }
+
+  document.getElementById('hist-list').innerHTML=filtradas.map(s=>{
+    const sid=s.sid||s.date;
+    const exs=s.exercises||[];
+    const totalSeries=exs.reduce((n,e)=>n+((e.sets||[]).length),0);
+    const aberto=histAbertos[sid]?' open':'';
+    const resumo=exs.length
+      ? `${exs.length} exercício${exs.length>1?'s':''} · ${totalSeries} série${totalSeries>1?'s':''} · ${(s.volume||0).toLocaleString('pt-BR')} kg`
+      : `${(s.volume||0).toLocaleString('pt-BR')} kg levantados`;
+
+    const corpo=exs.length ? exs.map(ex=>{
+      const m=(meta[sid]||{})[ex.name]||{};
+      let badge='';
+      if(m.delta!==null&&m.delta!==undefined){
+        if(m.delta>0)      badge=`<span class="delta delta-up">+${m.delta} kg</span>`;
+        else if(m.delta<0) badge=`<span class="delta delta-down">${m.delta} kg</span>`;
+        else               badge=`<span class="delta delta-same">manteve</span>`;
+      }
+      const sets=(ex.sets||[]).map((st,i)=>
+        `<span class="hist-set">${i+1}ª <strong>${st.reps||0}</strong> reps${st.kg?` · <strong>${st.kg}</strong> kg`:''}</span>`).join('');
+      return `<div class="hist-ex">
+        <div class="hist-ex-head">
+          <span class="hist-ex-name">${ex.name}</span>
+          ${m.max?`<span class="hist-ex-max">máx ${m.max} kg</span>`:''}
+          ${badge}
+        </div>
+        <div class="hist-sets">${sets||'<span class="hist-set">sem séries</span>'}</div>
+      </div>`;
+    }).join('')
+    : '<div style="font-size:12px;color:var(--muted);padding:10px 0">Este treino foi registrado antes do app guardar o detalhe das séries.</div>';
+
+    return `<div class="hist-item${aberto}" id="hist-${sid}">
+      <div class="hist-head" onclick="histToggle('${sid}')">
+        <span class="hist-arrow">▶</span>
+        <div class="hist-title">
+          <div class="hist-name">${s.volei?'🏐 ':''}${s.workoutName||'Treino'}</div>
+          <div class="hist-sub">${resumo}</div>
+        </div>
+        <div class="hist-date">${histDataLabel(s.date)}</div>
+      </div>
+      <div class="hist-body">${corpo}</div>
+    </div>`;
+  }).join('');
+}
+
+function histToggle(sid){
+  histAbertos[sid]=!histAbertos[sid];
+  const el=document.getElementById('hist-'+sid);
+  if(el) el.classList.toggle('open',!!histAbertos[sid]);
 }
 let selectedExercise=null;
 function renderProgress(){
@@ -1396,6 +1543,9 @@ function renderProgress(){
     document.getElementById('load-history').innerHTML='';
   }
   renderWeight();
+  // se o usuário estiver na aba Histórico, atualiza junto
+  const ph=document.getElementById('progress-historico');
+  if(ph && ph.style.display!=='none') renderHistorico();
 }
 function selectExercise(n){selectedExercise=n;renderProgress();}
 
