@@ -32,6 +32,21 @@ SQL Editor do Supabase:
 2. `2-seguranca-rls.sql` — **correção de segurança** (ver abaixo)
 3. `3-corrigir-aprovacao.sql` — ajuste no fluxo de aprovação
 4. `4-perfil-automatico.sql` — cria o perfil no banco quando o login nasce
+5. `5-corrige-aprovacao-admin.sql` — aprovação do admin grava coluna e jsonb
+6. `6-preserva-campos-essenciais.sql` — impede o cliente de apagar campos
+
+### Por que o script 6 existe
+
+O app grava o objeto de perfil **inteiro** a cada alteração. Se o objeto
+que ele tem em memória estiver incompleto, o que faltar é apagado do
+banco — foi assim que um usuário perdeu `name` e `email` minutos depois
+de ser criado, e a aba Admin passou a contar o pendente na estatística
+mas quebrar ao montar a lista (`u.name.split(' ')` sobre `undefined`).
+
+O banco agora trata `name`, `email` e os arrays estruturais como campos
+que só podem ser alterados, nunca apagados: um cliente que "esqueceu" um
+campo recebe de volta o valor que já existia. O `email` vem sempre de
+`auth.users`, que é a fonte de verdade.
 
 ## Cadastro e confirmação de email
 
