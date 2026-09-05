@@ -218,30 +218,49 @@
   .status-approved{background:rgba(99,153,34,0.2);color:#97c459;}
   .status-blocked{background:rgba(255,107,107,0.15);color:var(--danger);}
 
+  /* EXECUÇÃO DO TREINO: cronômetro e edição da lista */
+  .exec-timer{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);
+    border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:12px;}
+  .exec-clock{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:0.5px;}
+  .exec-clock.rodando{color:var(--accent);}
+  .exec-clock.parado{color:var(--muted);}
+  .exec-timer-lbl{flex:1;font-size:12px;color:var(--muted);}
+  .btn-timer{background:var(--accent);color:#000;border:none;padding:8px 14px;border-radius:var(--radius-sm);
+    font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;}
+  .ex-actions{display:flex;gap:4px;}
+  .btn-ex-act{background:transparent;border:1px solid var(--border);color:var(--muted);
+    width:26px;height:26px;border-radius:6px;font-size:12px;cursor:pointer;line-height:1;padding:0;}
+  .btn-ex-act:hover{color:var(--text);border-color:var(--accent);}
+  .btn-ex-act.danger:hover{color:var(--danger);border-color:rgba(255,107,107,0.4);}
+  .btn-add-exec{width:100%;background:transparent;border:1px dashed var(--border);color:var(--muted);
+    padding:11px;border-radius:var(--radius-sm);font-size:13px;cursor:pointer;margin-top:10px;}
+  .btn-add-exec:hover{border-color:var(--accent);color:var(--accent);}
+  .ex-origem{font-size:10px;color:var(--muted);background:var(--bg3);padding:1px 6px;border-radius:99px;margin-left:6px;}
+
   /* HISTÓRICO DE TREINOS */
-  .hist-filter{width:100%;padding:10px 12px;margin-bottom:12px;background:var(--bg3);color:var(--text);
+  .hx-filter{width:100%;padding:10px 12px;margin-bottom:12px;background:var(--bg3);color:var(--text);
     border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;}
-  .hist-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  .hx-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
     margin-bottom:10px;overflow:hidden;}
-  .hist-head{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;}
-  .hist-head:hover{background:rgba(255,255,255,0.02);}
-  .hist-title{flex:1;min-width:0;}
-  .hist-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .hist-sub{font-size:12px;color:var(--muted);margin-top:2px;}
-  .hist-date{font-size:12px;color:var(--muted);text-align:right;white-space:nowrap;}
-  .hist-arrow{color:var(--muted);font-size:11px;transition:transform .15s;}
-  .hist-item.open .hist-arrow{transform:rotate(90deg);}
-  .hist-body{display:none;padding:0 14px 12px;border-top:1px solid var(--border);}
-  .hist-item.open .hist-body{display:block;}
-  .hist-ex{padding:10px 0;border-bottom:1px solid var(--border);}
-  .hist-ex:last-child{border-bottom:none;}
-  .hist-ex-head{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;}
-  .hist-ex-name{font-size:13px;font-weight:600;flex:1;}
-  .hist-ex-max{font-size:12px;color:var(--muted);}
-  .hist-sets{display:flex;flex-wrap:wrap;gap:6px;}
-  .hist-set{font-size:12px;background:var(--bg3);border:1px solid var(--border);
+  .hx-head{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;}
+  .hx-head:hover{background:rgba(255,255,255,0.02);}
+  .hx-title{flex:1;min-width:0;}
+  .hx-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .hx-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+  .hx-date{font-size:12px;color:var(--muted);text-align:right;white-space:nowrap;}
+  .hx-arrow{color:var(--muted);font-size:11px;transition:transform .15s;}
+  .hx-item.open .hx-arrow{transform:rotate(90deg);}
+  .hx-body{display:none;padding:0 14px 12px;border-top:1px solid var(--border);}
+  .hx-item.open .hx-body{display:block;}
+  .hx-ex{padding:10px 0;border-bottom:1px solid var(--border);}
+  .hx-ex:last-child{border-bottom:none;}
+  .hx-ex-head{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;}
+  .hx-ex-name{font-size:13px;font-weight:600;flex:1;}
+  .hx-ex-max{font-size:12px;color:var(--muted);}
+  .hx-sets{display:flex;flex-wrap:wrap;gap:6px;}
+  .hx-set{font-size:12px;background:var(--bg3);border:1px solid var(--border);
     border-radius:var(--radius-sm);padding:4px 8px;color:var(--muted);}
-  .hist-set strong{color:var(--text);font-weight:600;}
+  .hx-set strong{color:var(--text);font-weight:600;}
   .delta{font-size:11px;font-weight:600;padding:1px 6px;border-radius:99px;}
   .delta-up{background:rgba(99,153,34,0.2);color:#97c459;}
   .delta-down{background:rgba(255,107,107,0.15);color:var(--danger);}
@@ -314,8 +333,9 @@
     <div id="home-alerts"></div>
     <div class="week-row" id="week-dots"></div>
     <div class="grid3" id="home-stats"></div>
+    <button class="btn-main" style="margin-bottom:1.2rem" onclick="openTreinoLivre()">▶ Começar treino livre</button>
     <div class="section-head">
-      <h2>Seus treinos</h2>
+      <h2>Seus modelos</h2>
       <div style="display:flex;gap:6px">
         <button class="btn-add volei" onclick="openCreateWorkout(true)">🏐 Vôlei</button>
         <button class="btn-add" onclick="openCreateWorkout(false)">+ Novo</button>
@@ -347,7 +367,7 @@
       <button class="seg" onclick="switchProgressTab('historico')">Histórico</button>
     </div>
     <div id="progress-historico" style="display:none">
-      <select class="hist-filter" id="hist-filter" onchange="renderHistorico()"></select>
+      <select class="hx-filter" id="hx-filter" onchange="renderHistorico()"></select>
       <div id="hist-list"></div>
     </div>
     <div id="progress-carga">
@@ -491,7 +511,49 @@
   <div class="modal">
     <div class="modal-handle"></div>
     <div id="detail-content"></div>
-    <button class="btn-cancel" onclick="closeModal('modal-detail')" style="margin-top:12px">Fechar</button>
+    <button class="btn-cancel" onclick="fecharExecucao()" style="margin-top:12px">Fechar</button>
+  </div>
+</div>
+
+<!-- MODAL treino livre: escolhe os grupos e monta a partir do histórico -->
+<div class="modal-overlay" id="modal-livre">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Treino livre</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:14px">
+      Escolha o que vai treinar hoje. Monto a lista com os exercícios que você
+      mais faz nesses grupos, já com a última carga — e você ajusta tudo na hora.
+    </div>
+    <div class="modal-field">
+      <label>Grupos musculares</label>
+      <div class="group-chips" id="livre-groups"></div>
+    </div>
+    <div class="modal-field"><label>Nome (opcional)</label>
+      <input type="text" id="livre-nome" placeholder="deixe vazio para usar o nome dos grupos"></div>
+    <div id="livre-preview" style="font-size:12px;color:var(--muted);margin-bottom:12px"></div>
+    <button class="btn-main" onclick="iniciarTreinoLivre()">Montar treino</button>
+    <button class="btn-cancel" onclick="closeModal('modal-livre')">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL adicionar/trocar exercício durante a execução -->
+<div class="modal-overlay" id="modal-ex">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="ex-title">Adicionar exercício</div>
+    <div class="modal-field"><label>Exercício</label>
+      <input type="text" id="ex-nome" list="ex-known" placeholder="digite ou escolha um já usado" autocomplete="off">
+      <datalist id="ex-known"></datalist>
+    </div>
+    <div style="display:flex;gap:10px">
+      <div class="modal-field" style="flex:1"><label>Séries</label>
+        <input type="number" id="ex-sets" value="3" min="1" max="12"></div>
+      <div class="modal-field" style="flex:1"><label>Reps</label>
+        <input type="number" id="ex-reps" value="10" min="1" max="200"></div>
+    </div>
+    <div id="ex-hint" style="font-size:12px;color:var(--muted);margin-bottom:12px"></div>
+    <button class="btn-main" onclick="confirmarExercicio()">Confirmar</button>
+    <button class="btn-cancel" onclick="closeModal('modal-ex')">Cancelar</button>
   </div>
 </div>
 
@@ -1132,148 +1194,397 @@ function renderAgenda(){
   }).join('');
 }
 
-// ===== DETALHE + REGISTRO DE CARGA =====
-// abre o treino para executar. sessionEdit = sessão existente sendo editada (ou null)
-function openDetail(workoutId, sessionEdit){
-  const email=currentUser(); const user=getUsers()[email];
-  const w=(user.workouts||[]).find(x=>x.id===workoutId);
-  if(!w) return;
-  // estrutura por série: cada exercício tem uma lista de séries {done, reps, kg}
-  let exSets;
-  if(sessionEdit && sessionEdit.exercises){
-    // editando um treino já registrado -> carrega o que foi feito
-    exSets=w.exercises.map(ex=>{
-      const rec=sessionEdit.exercises.find(r=>r.name===ex.name);
-      if(rec && rec.sets) return rec.sets.map(s=>({done:true,reps:s.reps??ex.reps,kg:s.kg??''}));
-      return Array.from({length:ex.sets},()=>({done:false,reps:ex.reps,kg:''}));
-    });
-  } else {
-    // treino novo -> sugere as reps do plano e a última carga usada
-    exSets=w.exercises.map(ex=>{
-      const hist=(user.loads||{})[ex.name];
-      const lastKg=hist&&hist.length?hist[hist.length-1].kg:'';
-      return Array.from({length:ex.sets},()=>({done:false,reps:ex.reps,kg:lastKg}));
-    });
-  }
+// ===== EXECUÇÃO DO TREINO =====
+// A lista de exercícios pertence à SESSÃO, não ao modelo: trocar uma máquina,
+// pular ou acrescentar um exercício não exige criar outro treino. O modelo só
+// muda se você mandar, no fim.
+let EXEC=null;   // {itens, w, sessionEdit, email, t0, acumulado, tick, livre, original}
 
-  function calcVolume(){
-    let v=0;
-    exSets.forEach(sets=>sets.forEach(s=>{ if(s.done){ v+=(parseFloat(s.kg)||0)*(parseInt(s.reps)||0); } }));
-    return Math.round(v);
-  }
+// todos os exercícios que a pessoa já usou — alimenta o autocomplete
+function exerciciosConhecidos(user){
+  const nomes=new Set();
+  Object.keys(user.loads||{}).forEach(n=>nomes.add(n));
+  (user.completedSessions||[]).forEach(s=>(s.exercises||[]).forEach(e=>e.name&&nomes.add(e.name)));
+  (user.workouts||[]).forEach(w=>(w.exercises||[]).forEach(e=>e.name&&nomes.add(e.name)));
+  return [...nomes].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+}
 
-  function renderD(){
-    const all=exSets.flat();
-    const done=all.filter(s=>s.done).length;
-    const pct=all.length?Math.round(done/all.length*100):0;
-    const vol=calcVolume();
-    const isEdit=!!sessionEdit;
-    const isSaved=!!(sessionEdit&&sessionEdit.exercises);
-    document.getElementById('detail-content').innerHTML=`
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
-        <div><div style="font-size:18px;font-weight:700">${w.volei?'🏐 ':''}${w.name}</div>
-        <div style="font-size:13px;color:var(--muted);margin-top:2px">${groupLabel(w)} · ${w.exercises.length} exercícios</div></div>
-        <div style="text-align:right"><div style="font-size:20px;font-weight:700;color:var(--accent)">${pct}%</div>
-        <div style="font-size:11px;color:var(--muted)">completo</div></div>
-      </div>
-      ${isEdit?`<div style="font-size:12px;color:var(--warn);margin-bottom:8px">${isSaved?'✏️ Editando':'📅 Registrando'} treino de ${fmtDate(sessionEdit.date)}</div>`:''}
-      <div class="prog-wrap" style="margin-bottom:6px"><div class="prog-fill" style="width:${pct}%"></div></div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Volume: <strong style="color:var(--accent)">${vol.toLocaleString('pt-BR')} kg</strong></div>
-
-      ${w.exercises.map((ex,ei)=>`
-        <div class="detail-ex">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
-            <div class="detail-ex-name">${ex.name}</div>
-            <div style="font-size:11px;color:var(--muted)">plano: ${ex.sets}×${ex.reps}</div>
-          </div>
-          <div class="sets-head"><span></span><span>reps</span><span>kg</span><span></span></div>
-          ${exSets[ei].map((s,si)=>`
-            <div class="set-line ${s.done?'done':''}">
-              <span class="set-num">${si+1}</span>
-              <input type="number" class="set-in" value="${s.reps??''}" placeholder="${ex.reps}" min="0" max="200"
-                onchange="window._setVal(${ei},${si},'reps',this.value)">
-              <input type="number" class="set-in" value="${s.kg??''}" placeholder="—" min="0" step="0.5"
-                onchange="window._setVal(${ei},${si},'kg',this.value)">
-              <button class="set-check ${s.done?'done':''}" onclick="window._toggleSet(${ei},${si})">${s.done?'✓':''}</button>
-            </div>`).join('')}
-          <div style="display:flex;gap:6px;margin-top:6px">
-            <button class="btn-mini" onclick="window._addSet(${ei})">+ série</button>
-            ${exSets[ei].length>1?`<button class="btn-mini" onclick="window._delSet(${ei})">− série</button>`:''}
-            <button class="btn-mini" onclick="window._repeatFirst(${ei})">repetir 1ª em todas</button>
-          </div>
-        </div>`).join('')}
-
-      <button class="btn-main" style="margin-top:16px" onclick="window._finishWorkout()">
-        ${isSaved?'Salvar alterações ✓':'Finalizar treino ✓'}
-      </button>
-      ${isSaved?`<button class="btn-cancel" style="color:var(--danger);border-color:rgba(255,107,107,0.3)" onclick="window._deleteSession()">Apagar este treino</button>`:''}`;
-  }
-
-  window._toggleSet=(ei,si)=>{ exSets[ei][si].done=!exSets[ei][si].done; renderD(); };
-  window._setVal=(ei,si,field,val)=>{ exSets[ei][si][field]=val; if(field==='kg'||field==='reps'){ if(val!=='') exSets[ei][si].done=true; } renderD(); };
-  window._addSet=(ei)=>{ const last=exSets[ei][exSets[ei].length-1]||{}; exSets[ei].push({done:false,reps:last.reps||w.exercises[ei].reps,kg:last.kg||''}); renderD(); };
-  window._delSet=(ei)=>{ if(exSets[ei].length>1){ exSets[ei].pop(); renderD(); } };
-  window._repeatFirst=(ei)=>{ const f=exSets[ei][0]; exSets[ei]=exSets[ei].map(()=>({done:f.done,reps:f.reps,kg:f.kg})); renderD(); };
-
-  window._deleteSession=()=>{
-    if(!sessionEdit) return;
-    if(!confirm('Apagar o treino de '+fmtDate(sessionEdit.date)+'?')) return;
-    const data=getUserData(email);
-    data.completedSessions=(data.completedSessions||[]).filter(s=>s.sid!==sessionEdit.sid);
-    saveUserData(email,data);
-    closeModal('modal-detail');
-    showToast('Treino apagado.');
-    renderHome();
-  };
-
-  window._finishWorkout=()=>{
-    const data=getUserData(email);
-    data.loads=data.loads||{};
-    const date = sessionEdit ? sessionEdit.date : todayStr();
-    // monta o registro detalhado por série
-    const exercisesRec=[];
-    let volume=0;
-    w.exercises.forEach((ex,ei)=>{
-      const doneSets=exSets[ei].filter(s=>s.done&&(s.kg!==''||s.reps!==''));
-      if(!doneSets.length) return;
-      const sets=doneSets.map(s=>({reps:parseInt(s.reps)||0,kg:parseFloat(s.kg)||0}));
-      sets.forEach(s=>{ volume+=s.kg*s.reps; });
-      exercisesRec.push({name:ex.name,sets});
-      // guarda a maior carga do dia no histórico do exercício (para o gráfico)
-      const maxKg=Math.max(...sets.map(s=>s.kg));
-      if(maxKg>0){
-        data.loads[ex.name]=data.loads[ex.name]||[];
-        const existing=data.loads[ex.name].find(r=>r.date===date);
-        if(existing) existing.kg=maxKg;
-        else data.loads[ex.name].push({date,kg:maxKg});
-      }
-    });
-    if(!exercisesRec.length){ showToast('Marque ao menos uma série.'); return; }
-
-    const record={
-      sid: sessionEdit ? sessionEdit.sid : ('s'+Date.now()+Math.floor(Math.random()*1000)),
-      workoutId:w.id, workoutName:w.name,
-      groups: groupsOf(w), group: groupsOf(w)[0]||'', // group mantido p/ compatibilidade
-      volei:!!w.volei, date, volume:Math.round(volume),
-      exercises:exercisesRec
-    };
-    data.completedSessions=data.completedSessions||[];
-    if(sessionEdit){
-      const idx=data.completedSessions.findIndex(s=>s.sid===sessionEdit.sid);
-      if(idx>=0) data.completedSessions[idx]=record; else data.completedSessions.push(record);
-      showToast('Treino atualizado! ✏️');
-    } else {
-      data.completedSessions.push(record);
-      showToast('Treino salvo! 💪');
+// último registro real de um exercício (carga, reps e nº de séries)
+function ultimoRegistro(user,nome){
+  const ses=(user.completedSessions||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  for(const s of ses){
+    const e=(s.exercises||[]).find(x=>x.name===nome);
+    if(e&&e.sets&&e.sets.length){
+      const kg=Math.max(...e.sets.map(x=>Number(x.kg)||0));
+      return {kg:kg||'', reps:e.sets[0].reps||'', nSets:e.sets.length, date:s.date};
     }
-    saveUserData(email,data);
-    closeModal('modal-detail');
-    renderHome();
-  };
+  }
+  const h=(user.loads||{})[nome];
+  if(h&&h.length) return {kg:h[h.length-1].kg, reps:'', nSets:3, date:h[h.length-1].date};
+  return null;
+}
 
-  renderD();
+// monta um exercício da sessão já preenchido com o que foi feito da última vez
+function novoItem(user,nome,nSets,nReps){
+  const u=ultimoRegistro(user,nome);
+  const qtd=nSets||(u&&u.nSets)||3;
+  const reps=nReps||(u&&u.reps)||10;
+  const kg=u?u.kg:'';
+  return {name:nome, planSets:qtd, planReps:reps, ultimo:u,
+          sets:Array.from({length:qtd},()=>({done:false,reps,kg}))};
+}
+
+// Pistas de nome -> grupo. Servem para ORDENAR, nunca para excluir. Um treino
+// costuma ser marcado com vários grupos de uma vez (ex: "Superiores" marcado
+// como Peito + Costas + Bíceps/Tríceps), então a marcação da sessão sozinha não
+// distingue o que pertence a cada grupo.
+const PISTAS_GRUPO={
+  'Peito':['supino','crucifixo','peck','mergulho','flexao','flexão','crossover'],
+  'Costas':['puxada','remada','ramada','barra fixa','pulldown','serrote','pull'],
+  'Ombros':['desenvolvimento','elevacao','elevação','arnold','encolhimento','ombro'],
+  'Bíceps / Tríceps':['rosca','biceps','bíceps','triceps','tríceps','pulley','testa','frances','francês'],
+  'Pernas':['agachamento','leg','extensora','flexora','panturrilha','afundo','avanco','avanço','stiff','terra','gluteo','glúteo','hack','cadeira'],
+  'Core':['prancha','abdominal','abdomen','abdômen','russian','obliquo','oblíquo'],
+  'Cardio':['esteira','bike','corrida','remo','eliptico','elíptico','corda','escada']
+};
+function pontuaPistas(nome,grupos){
+  const n=(nome||'').toLowerCase();
+  let p=0;
+  grupos.forEach(g=>{ (PISTAS_GRUPO[g]||[]).forEach(k=>{ if(n.includes(k)) p++; }); });
+  return p;
+}
+
+// Exercícios sugeridos para os grupos escolhidos.
+// Ordena por: (1) o nome combina com o grupo pedido, (2) quantas vezes foi feito.
+// Nunca descarta nada — o que não combina vai para o fim, e você edita na hora.
+function frequentesDosGrupos(user,grupos){
+  const cont={};
+  (user.completedSessions||[]).forEach(s=>{
+    const gs=groupsOf(s);
+    if(!gs.some(g=>grupos.includes(g))) return;
+    (s.exercises||[]).forEach(e=>{ if(e.name) cont[e.name]=(cont[e.name]||0)+1; });
+  });
+  return Object.keys(cont).sort((a,b)=>{
+    const pa=pontuaPistas(a,grupos), pb=pontuaPistas(b,grupos);
+    if(pa!==pb) return pb-pa;
+    if(cont[b]!==cont[a]) return cont[b]-cont[a];
+    return a.localeCompare(b,'pt-BR');
+  });
+}
+
+function atualizarDatalist(user){
+  const dl=document.getElementById('ex-known');
+  if(dl) dl.innerHTML=exerciciosConhecidos(user).map(n=>`<option value="${n.replace(/"/g,'&quot;')}">`).join('');
+}
+
+// ---- cronômetro ----
+function execTempoMs(){ if(!EXEC) return 0; return EXEC.acumulado+(EXEC.t0?(Date.now()-EXEC.t0):0); }
+function fmtCrono(ms){
+  const t=Math.floor(ms/1000), m=Math.floor(t/60), s=t%60;
+  return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function execIniciar(){
+  if(!EXEC||EXEC.t0) return;
+  EXEC.t0=Date.now();
+  // atualiza só o relógio: re-renderizar tudo faria os inputs perderem o foco
+  EXEC.tick=setInterval(()=>{
+    const el=document.getElementById('exec-clock');
+    if(el) el.textContent=fmtCrono(execTempoMs());
+  },1000);
+  renderExec();
+}
+function execPararRelogio(){ if(EXEC&&EXEC.tick){ clearInterval(EXEC.tick); EXEC.tick=null; } }
+function fecharExecucao(){ execPararRelogio(); EXEC=null; closeModal('modal-detail'); }
+
+// ---- abre o treino para executar ----
+// workoutId: modelo salvo | sessionEdit: sessão existente | planoLivre: {name,groups,nomes}
+function openDetail(workoutId, sessionEdit, planoLivre){
+  const email=currentUser(); const user=getUsers()[email];
+  let w;
+  if(planoLivre){
+    w={id:null,name:planoLivre.name,groups:planoLivre.groups,volei:false,
+       exercises:planoLivre.nomes.map(n=>({name:n,sets:3,reps:10}))};
+  } else {
+    w=(user.workouts||[]).find(x=>x.id===workoutId);
+    if(!w) return;
+  }
+
+  let itens;
+  if(sessionEdit && sessionEdit.exercises && sessionEdit.exercises.length){
+    // editando algo já registrado: a verdade é o que foi feito, não o modelo
+    itens=sessionEdit.exercises.map(rec=>({
+      name:rec.name,
+      planSets:(rec.sets||[]).length||3,
+      planReps:(rec.sets&&rec.sets[0]&&rec.sets[0].reps)||10,
+      ultimo:null,
+      sets:(rec.sets||[]).map(s=>({done:true,reps:s.reps??'',kg:s.kg??''}))
+    }));
+  } else if(planoLivre){
+    itens=planoLivre.nomes.map(n=>novoItem(user,n));
+  } else {
+    itens=(w.exercises||[]).map(ex=>novoItem(user,ex.name,ex.sets,ex.reps));
+  }
+
+  EXEC={itens,w,sessionEdit,email,livre:!!planoLivre,
+        original:(w.exercises||[]).map(e=>e.name).join('|'),
+        t0:null,acumulado:0,tick:null};
+
+  atualizarDatalist(user);
+  renderExec();
   document.getElementById('modal-detail').classList.add('open');
 }
+
+function renderExec(){
+  if(!EXEC) return;
+  const {itens,w,sessionEdit}=EXEC;
+  const all=itens.flatMap(i=>i.sets);
+  const done=all.filter(s=>s.done).length;
+  const pct=all.length?Math.round(done/all.length*100):0;
+  let vol=0;
+  itens.forEach(i=>i.sets.forEach(s=>{ if(s.done) vol+=(parseFloat(s.kg)||0)*(parseInt(s.reps)||0); }));
+  const isEdit=!!sessionEdit;
+  const isSaved=!!(sessionEdit&&sessionEdit.exercises&&sessionEdit.exercises.length);
+  const rodando=!!EXEC.t0;
+
+  // o cronômetro só faz sentido no treino de hoje
+  const timer = isEdit ? '' : `
+    <div class="exec-timer">
+      <div class="exec-clock ${rodando?'rodando':'parado'}" id="exec-clock">${fmtCrono(execTempoMs())}</div>
+      <div class="exec-timer-lbl">${rodando?'treino em andamento':'o tempo começa quando você iniciar'}</div>
+      ${rodando?'':'<button class="btn-timer" onclick="execIniciar()">▶ Iniciar</button>'}
+    </div>`;
+
+  document.getElementById('detail-content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+      <div><div style="font-size:18px;font-weight:700">${w.volei?'🏐 ':''}${w.name}</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:2px">${groupLabel(w)} · ${itens.length} exercício${itens.length===1?'':'s'}</div></div>
+      <div style="text-align:right"><div style="font-size:20px;font-weight:700;color:var(--accent)">${pct}%</div>
+      <div style="font-size:11px;color:var(--muted)">completo</div></div>
+    </div>
+    ${isEdit?`<div style="font-size:12px;color:var(--warn);margin-bottom:8px">${isSaved?'✏️ Editando':'📅 Registrando'} treino de ${fmtDate(sessionEdit.date)}</div>`:''}
+    ${timer}
+    <div class="prog-wrap" style="margin-bottom:6px"><div class="prog-fill" style="width:${pct}%"></div></div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Volume: <strong style="color:var(--accent)">${vol.toLocaleString('pt-BR')} kg</strong></div>
+
+    ${itens.map((it,ei)=>`
+      <div class="detail-ex">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px">
+          <div class="detail-ex-name" style="flex:1;min-width:0">${it.name}${
+            it.ultimo&&it.ultimo.kg?`<span class="ex-origem">última: ${it.ultimo.kg} kg</span>`:''}</div>
+          <div class="ex-actions">
+            <button class="btn-ex-act" title="Trocar exercício" onclick="abrirTrocarExercicio(${ei})">⇄</button>
+            <button class="btn-ex-act danger" title="Remover" onclick="execRemoverExercicio(${ei})">✕</button>
+          </div>
+        </div>
+        <div class="sets-head"><span></span><span>reps</span><span>kg</span><span></span></div>
+        ${it.sets.map((s,si)=>`
+          <div class="set-line ${s.done?'done':''}">
+            <span class="set-num">${si+1}</span>
+            <input type="number" class="set-in" value="${s.reps??''}" placeholder="${it.planReps}" min="0" max="200"
+              onchange="execSetVal(${ei},${si},'reps',this.value)">
+            <input type="number" class="set-in" value="${s.kg??''}" placeholder="—" min="0" step="0.5"
+              onchange="execSetVal(${ei},${si},'kg',this.value)">
+            <button class="set-check ${s.done?'done':''}" onclick="execToggleSet(${ei},${si})">${s.done?'✓':''}</button>
+          </div>`).join('')}
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <button class="btn-mini" onclick="execAddSet(${ei})">+ série</button>
+          ${it.sets.length>1?`<button class="btn-mini" onclick="execDelSet(${ei})">− série</button>`:''}
+          <button class="btn-mini" onclick="execRepetirPrimeira(${ei})">repetir 1ª em todas</button>
+        </div>
+      </div>`).join('')}
+
+    <button class="btn-add-exec" onclick="abrirAdicionarExercicio()">+ adicionar exercício</button>
+
+    <button class="btn-main" style="margin-top:16px" onclick="execFinalizar()">
+      ${isSaved?'Salvar alterações ✓':'Finalizar treino ✓'}
+    </button>
+    ${isSaved?`<button class="btn-cancel" style="color:var(--danger);border-color:rgba(255,107,107,0.3)" onclick="execApagarSessao()">Apagar este treino</button>`:''}`;
+}
+
+// ---- edição das séries ----
+function execToggleSet(ei,si){ EXEC.itens[ei].sets[si].done=!EXEC.itens[ei].sets[si].done; renderExec(); }
+function execSetVal(ei,si,campo,val){
+  const s=EXEC.itens[ei].sets[si];
+  s[campo]=val;
+  if((campo==='kg'||campo==='reps') && val!=='') s.done=true;
+  renderExec();
+}
+function execAddSet(ei){
+  const it=EXEC.itens[ei];
+  const ult=it.sets[it.sets.length-1]||{};
+  it.sets.push({done:false,reps:ult.reps||it.planReps,kg:ult.kg||''});
+  renderExec();
+}
+function execDelSet(ei){ const it=EXEC.itens[ei]; if(it.sets.length>1){ it.sets.pop(); renderExec(); } }
+function execRepetirPrimeira(ei){
+  const it=EXEC.itens[ei], p=it.sets[0];
+  it.sets=it.sets.map(()=>({done:p.done,reps:p.reps,kg:p.kg}));
+  renderExec();
+}
+
+// ---- edição da lista de exercícios ----
+function execRemoverExercicio(ei){
+  const it=EXEC.itens[ei];
+  const feito=it.sets.some(s=>s.done);
+  if(feito && !confirm('Remover "'+it.name+'"? As séries marcadas nele serão perdidas.')) return;
+  EXEC.itens.splice(ei,1);
+  renderExec();
+}
+
+let exAlvo=null;   // índice sendo trocado, ou null para adicionar
+function abrirAdicionarExercicio(){
+  exAlvo=null;
+  document.getElementById('ex-title').textContent='Adicionar exercício';
+  document.getElementById('ex-nome').value='';
+  document.getElementById('ex-sets').value=3;
+  document.getElementById('ex-reps').value=10;
+  document.getElementById('ex-hint').textContent='Digite para ver os exercícios que você já fez.';
+  atualizarDatalist(getUsers()[currentUser()]);
+  document.getElementById('modal-ex').classList.add('open');
+}
+function abrirTrocarExercicio(ei){
+  exAlvo=ei;
+  const it=EXEC.itens[ei];
+  document.getElementById('ex-title').textContent='Trocar exercício';
+  document.getElementById('ex-nome').value='';
+  document.getElementById('ex-sets').value=it.sets.length;
+  document.getElementById('ex-reps').value=it.planReps;
+  document.getElementById('ex-hint').textContent='Substituindo "'+it.name+'". As séries já marcadas serão refeitas com a carga do novo exercício.';
+  atualizarDatalist(getUsers()[currentUser()]);
+  document.getElementById('modal-ex').classList.add('open');
+}
+function confirmarExercicio(){
+  const nome=(document.getElementById('ex-nome').value||'').trim();
+  if(!nome){ showToast('Escreva o nome do exercício.'); return; }
+  const nSets=parseInt(document.getElementById('ex-sets').value)||3;
+  const nReps=parseInt(document.getElementById('ex-reps').value)||10;
+  const user=getUsers()[currentUser()];
+  const item=novoItem(user,nome,nSets,nReps);
+  if(exAlvo===null) EXEC.itens.push(item);
+  else EXEC.itens[exAlvo]=item;
+  closeModal('modal-ex');
+  renderExec();
+  showToast(exAlvo===null?'Exercício adicionado':'Exercício trocado');
+}
+
+// ---- apagar sessão ----
+function execApagarSessao(){
+  const {email,sessionEdit}=EXEC;
+  if(!sessionEdit) return;
+  if(!confirm('Apagar o treino de '+fmtDate(sessionEdit.date)+'?')) return;
+  const data=getUserData(email);
+  data.completedSessions=(data.completedSessions||[]).filter(s=>s.sid!==sessionEdit.sid);
+  saveUserData(email,data);
+  fecharExecucao();
+  showToast('Treino apagado.');
+  renderHome();
+}
+
+// ---- finalizar ----
+function execFinalizar(){
+  const {itens,w,sessionEdit,email}=EXEC;
+  const data=getUserData(email);
+  data.loads=data.loads||{};
+  const date = sessionEdit ? sessionEdit.date : todayStr();
+
+  const exercisesRec=[];
+  let volume=0;
+  itens.forEach(it=>{
+    const feitas=it.sets.filter(s=>s.done&&(s.kg!==''||s.reps!==''));
+    if(!feitas.length) return;
+    const sets=feitas.map(s=>({reps:parseInt(s.reps)||0,kg:parseFloat(s.kg)||0}));
+    sets.forEach(s=>{ volume+=s.kg*s.reps; });
+    exercisesRec.push({name:it.name,sets});
+    const maxKg=Math.max(...sets.map(s=>s.kg));
+    if(maxKg>0){
+      data.loads[it.name]=data.loads[it.name]||[];
+      const ex=data.loads[it.name].find(r=>r.date===date);
+      if(ex) ex.kg=maxKg; else data.loads[it.name].push({date,kg:maxKg});
+    }
+  });
+  if(!exercisesRec.length){ showToast('Marque ao menos uma série.'); return; }
+
+  const minutos = (!sessionEdit && execTempoMs()>0) ? Math.max(1,Math.round(execTempoMs()/60000)) : null;
+
+  const record={
+    sid: sessionEdit ? sessionEdit.sid : ('s'+Date.now()+Math.floor(Math.random()*1000)),
+    workoutId:w.id, workoutName:w.name,
+    groups: groupsOf(w), group: groupsOf(w)[0]||'',
+    volei:!!w.volei, date, volume:Math.round(volume),
+    exercises:exercisesRec
+  };
+  if(minutos) record.durationMin=minutos;
+  else if(sessionEdit&&sessionEdit.durationMin) record.durationMin=sessionEdit.durationMin;
+
+  data.completedSessions=data.completedSessions||[];
+  if(sessionEdit){
+    const idx=data.completedSessions.findIndex(s=>s.sid===sessionEdit.sid);
+    if(idx>=0) data.completedSessions[idx]=record; else data.completedSessions.push(record);
+  } else {
+    data.completedSessions.push(record);
+  }
+
+  // a lista mudou em relação ao modelo? oferece guardar, sem impor
+  const agora=itens.map(i=>i.name).join('|');
+  if(!sessionEdit && agora!==EXEC.original){
+    if(EXEC.livre){
+      if(confirm('Salvar este treino como um modelo para repetir depois?')){
+        data.workouts=data.workouts||[];
+        data.workouts.push({id:'w'+Date.now(), name:w.name, groups:groupsOf(w), group:groupsOf(w)[0]||'',
+          duration:minutos||60,
+          exercises:itens.map(i=>({name:i.name,sets:i.sets.length,reps:parseInt(i.sets[0]&&i.sets[0].reps)||i.planReps}))});
+        showToast('Modelo criado ✓');
+      }
+    } else if(w.id && confirm('Você mudou os exercícios. Atualizar o modelo "'+w.name+'" com essa lista?')){
+      const mod=(data.workouts||[]).find(x=>x.id===w.id);
+      if(mod) mod.exercises=itens.map(i=>({name:i.name,sets:i.sets.length,reps:parseInt(i.sets[0]&&i.sets[0].reps)||i.planReps}));
+      showToast('Modelo atualizado ✓');
+    }
+  }
+
+  saveUserData(email,data);
+  showToast(sessionEdit?'Treino atualizado! ✏️':(minutos?`Treino salvo! 💪 ${minutos} min`:'Treino salvo! 💪'));
+  fecharExecucao();
+  renderHome();
+}
+
+// ===== TREINO LIVRE =====
+let livreGrupos=[];
+function openTreinoLivre(){
+  livreGrupos=[];
+  document.getElementById('livre-nome').value='';
+  document.getElementById('livre-preview').textContent='';
+  renderGroupChips('livre-groups', ALL_GROUPS, []);
+  // os chips já alternam sozinhos no onclick; aqui só atualizamos a prévia depois
+  document.querySelectorAll('#livre-groups .gchip').forEach(c=>{
+    c.addEventListener('click',()=>setTimeout(atualizarPreviaLivre,0));
+  });
+  document.getElementById('modal-livre').classList.add('open');
+}
+function gruposSelecionadosLivre(){
+  return readGroupChips('livre-groups');
+}
+function atualizarPreviaLivre(){
+  const gs=gruposSelecionadosLivre();
+  const el=document.getElementById('livre-preview');
+  if(!gs.length){ el.textContent=''; return; }
+  const user=getUsers()[currentUser()];
+  const nomes=frequentesDosGrupos(user,gs).slice(0,8);
+  el.innerHTML = nomes.length
+    ? '<strong>Vou montar com:</strong> '+nomes.join(', ')+'. Você ajusta na hora.'
+    : 'Sem histórico nesses grupos ainda — o treino começa vazio e você adiciona os exercícios.';
+}
+function iniciarTreinoLivre(){
+  const gs=gruposSelecionadosLivre();
+  if(!gs.length){ showToast('Escolha ao menos um grupo.'); return; }
+  const user=getUsers()[currentUser()];
+  const nomes=frequentesDosGrupos(user,gs).slice(0,8);
+  const nome=(document.getElementById('livre-nome').value||'').trim()
+    || gs.map(g=>g.replace('Vôlei - ','')).join(' + ');
+  closeModal('modal-livre');
+  openDetail(null,null,{name:nome,groups:gs,nomes});
+}
+
 
 // ===== ÚLTIMOS 5 DIAS (editar/apagar/adicionar) =====
 function lastNDates(n){
@@ -1458,7 +1769,7 @@ function renderHistorico(){
 
   // filtro por treino
   const nomes=[...new Set(sessoes.map(s=>s.workoutName).filter(Boolean))].sort();
-  const sel=document.getElementById('hist-filter');
+  const sel=document.getElementById('hx-filter');
   const escolhido=sel.value||'__todos';
   sel.innerHTML=`<option value="__todos">Todos os treinos (${sessoes.length})</option>`+
     nomes.map(n=>{
@@ -1480,9 +1791,10 @@ function renderHistorico(){
     const exs=s.exercises||[];
     const totalSeries=exs.reduce((n,e)=>n+((e.sets||[]).length),0);
     const aberto=histAbertos[sid]?' open':'';
+    const dur = s.durationMin ? ` · ${s.durationMin} min` : '';
     const resumo=exs.length
-      ? `${exs.length} exercício${exs.length>1?'s':''} · ${totalSeries} série${totalSeries>1?'s':''} · ${(s.volume||0).toLocaleString('pt-BR')} kg`
-      : `${(s.volume||0).toLocaleString('pt-BR')} kg levantados`;
+      ? `${exs.length} exercício${exs.length>1?'s':''} · ${totalSeries} série${totalSeries>1?'s':''} · ${(s.volume||0).toLocaleString('pt-BR')} kg${dur}`
+      : `${(s.volume||0).toLocaleString('pt-BR')} kg levantados${dur}`;
 
     const corpo=exs.length ? exs.map(ex=>{
       const m=(meta[sid]||{})[ex.name]||{};
@@ -1493,28 +1805,28 @@ function renderHistorico(){
         else               badge=`<span class="delta delta-same">manteve</span>`;
       }
       const sets=(ex.sets||[]).map((st,i)=>
-        `<span class="hist-set">${i+1}ª <strong>${st.reps||0}</strong> reps${st.kg?` · <strong>${st.kg}</strong> kg`:''}</span>`).join('');
-      return `<div class="hist-ex">
-        <div class="hist-ex-head">
-          <span class="hist-ex-name">${ex.name}</span>
-          ${m.max?`<span class="hist-ex-max">máx ${m.max} kg</span>`:''}
+        `<span class="hx-set">${i+1}ª <strong>${st.reps||0}</strong> reps${st.kg?` · <strong>${st.kg}</strong> kg`:''}</span>`).join('');
+      return `<div class="hx-ex">
+        <div class="hx-ex-head">
+          <span class="hx-ex-name">${ex.name}</span>
+          ${m.max?`<span class="hx-ex-max">máx ${m.max} kg</span>`:''}
           ${badge}
         </div>
-        <div class="hist-sets">${sets||'<span class="hist-set">sem séries</span>'}</div>
+        <div class="hx-sets">${sets||'<span class="hx-set">sem séries</span>'}</div>
       </div>`;
     }).join('')
     : '<div style="font-size:12px;color:var(--muted);padding:10px 0">Este treino foi registrado antes do app guardar o detalhe das séries.</div>';
 
-    return `<div class="hist-item${aberto}" id="hist-${sid}">
-      <div class="hist-head" onclick="histToggle('${sid}')">
-        <span class="hist-arrow">▶</span>
-        <div class="hist-title">
-          <div class="hist-name">${s.volei?'🏐 ':''}${s.workoutName||'Treino'}</div>
-          <div class="hist-sub">${resumo}</div>
+    return `<div class="hx-item${aberto}" id="hist-${sid}">
+      <div class="hx-head" onclick="histToggle('${sid}')">
+        <span class="hx-arrow">▶</span>
+        <div class="hx-title">
+          <div class="hx-name">${s.volei?'🏐 ':''}${s.workoutName||'Treino'}</div>
+          <div class="hx-sub">${resumo}</div>
         </div>
-        <div class="hist-date">${histDataLabel(s.date)}</div>
+        <div class="hx-date">${histDataLabel(s.date)}</div>
       </div>
-      <div class="hist-body">${corpo}</div>
+      <div class="hx-body">${corpo}</div>
     </div>`;
   }).join('');
 }
@@ -2270,7 +2582,12 @@ function renderProfile(){
 
 // ===== UTILS =====
 function closeModal(id){document.getElementById(id).classList.remove('open');}
-document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{
+  if(e.target!==m) return;
+  // o modal de execução precisa parar o cronômetro, senão o intervalo fica rodando
+  if(m.id==='modal-detail') fecharExecucao();
+  else m.classList.remove('open');
+}));
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 
 // ===== INIT =====
