@@ -71,7 +71,7 @@
   .nav-badge{position:absolute;top:8px;right:50%;margin-right:-24px;background:var(--danger);color:#fff;font-size:11px;font-weight:700;min-width:15px;height:15px;border-radius:99px;display:flex;align-items:center;justify-content:center;padding:0 4px;}
 
   /* PAGES */
-  .page{display:none;padding:24px;padding-bottom:80px;max-width:700px;margin:0 auto;}
+  .page{display:none;padding:16px;padding-bottom:80px;max-width:700px;margin:0 auto;}
   .page.active{display:block;}
 
   /* CARDS */
@@ -117,7 +117,7 @@
   /* MODAL */
   .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;align-items:flex-end;justify-content:center;}
   .modal-overlay.open{display:flex;}
-  .modal{background:var(--bg2);border-radius:var(--radius) var(--radius) 0 0;border-top:1px solid var(--border);padding:24px;width:100%;max-width:700px;max-height:90vh;overflow-y:auto;}
+  .modal{background:var(--bg2);border-radius:var(--radius) var(--radius) 0 0;border-top:1px solid var(--border);padding:16px;width:100%;max-width:700px;max-height:90vh;overflow-y:auto;}
   .modal-handle{width:36px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 16px;}
   .modal-title{font-size:20px;font-weight:700;margin-bottom:16px;}
   .modal-field{margin-bottom:12px;}
@@ -164,7 +164,7 @@
   .gchip.volei.on{background:var(--volei);color:#fff;border-color:var(--volei);}
   /* histórico editável (últimos dias) */
   .hist-item{display:flex;align-items:center;gap:12px;padding:12px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;}
-  .hist-date{font-size:var(--t-label);font-weight:600;letter-spacing:0.6px;text-transform:uppercase;color:var(--muted);min-width:52px;}
+  .hist-date{font-size:var(--t-label);color:var(--muted);min-width:52px;}
   .hist-info{flex:1;}
   .hist-name{font-size:var(--t-body);font-weight:600;}
   .hist-meta{font-size:11px;color:var(--muted);margin-top:4px;}
@@ -279,7 +279,7 @@
   .hx-title{flex:1;min-width:0;}
   .hx-name{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .hx-sub{font-size:13px;color:var(--muted);margin-top:4px;}
-  .hx-date{font-size:var(--t-label);font-weight:600;letter-spacing:0.6px;text-transform:uppercase;color:var(--muted);text-align:right;white-space:nowrap;}
+  .hx-date{font-size:var(--t-label);color:var(--muted);text-align:right;white-space:nowrap;}
   .hx-arrow{color:var(--muted);font-size:11px;transition:transform .15s;}
   .hx-item.open .hx-arrow{transform:rotate(90deg);}
   .hx-body{display:none;padding:0 16px 12px;border-top:1px solid var(--border);}
@@ -377,7 +377,7 @@
 
     <div id="recent-wrap" style="margin-top:24px;display:none">
       <div class="section-head sub">
-        <h2>Últimos 5 dias ✏️</h2>
+        <h2>Últimos 5 dias</h2>
         <button class="btn-add" onclick="openAddPastWorkout()">+ Esqueci de marcar</button>
       </div>
       <div id="recent-list"></div>
@@ -1120,7 +1120,7 @@ function renderHome(){
   document.getElementById('home-stats').innerHTML=`
     <div class="card"><div class="card-title">Semana</div><div class="card-value">${thisWeek}</div></div>
     <div class="card"><div class="card-title">Mês</div><div class="card-value">${thisMonth}</div></div>
-    <div class="card"><div class="card-title">Sequência</div><div class="card-value">${streak}🔥</div></div>`;
+    <div class="card"><div class="card-title">Sequência</div><div class="card-value" style="color:var(--accent)">${streak}</div></div>`;
   const workouts=user.workouts||[];
   const cc={};sessions.forEach(s=>cc[s.workoutId]=(cc[s.workoutId]||0)+1);
   const maxC=Math.max(1,...Object.values(cc));
@@ -2562,7 +2562,7 @@ function openStudent(studentKey){
     <div class="hint">Progresso do aluno</div>
     <div class="grid3" style="margin-bottom:16px">
       <div class="card"><div class="card-title">Semana</div><div class="card-value">${thisWeek}</div></div>
-      <div class="card"><div class="card-title">Sequência</div><div class="card-value">${streak}🔥</div></div>
+      <div class="card"><div class="card-title">Sequência</div><div class="card-value" style="color:var(--accent)">${streak}</div></div>
       <div class="card"><div class="card-title">Volume mês</div><div class="card-value" style="font-size:20px">${monthVol>=1000?(monthVol/1000).toFixed(1)+'t':monthVol}</div></div>
     </div>
     <div style="font-size:13px;font-weight:600;margin:8px 0 8px">Cargas atuais</div>
@@ -2797,7 +2797,7 @@ function renderProfile(){
   document.getElementById('profile-stats').innerHTML=`
     <div class="card"><div class="card-title">Total</div><div class="card-value">${sessions.length}</div></div>
     <div class="card"><div class="card-title">Semana</div><div class="card-value">${thisWeek}</div></div>
-    <div class="card"><div class="card-title">Sequência</div><div class="card-value">${streak}🔥</div></div>`;
+    <div class="card"><div class="card-title">Sequência</div><div class="card-value" style="color:var(--accent)">${streak}</div></div>`;
   const freq={};sessions.forEach(s=>freq[s.workoutName]=(freq[s.workoutName]||0)+1);
   const top=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,5);
   const maxF=top[0]?.[1]||1;
