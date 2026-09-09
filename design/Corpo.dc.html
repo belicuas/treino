@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Inter', system-ui, sans-serif; }
+    a { color: #C6F135; } a:hover { color: #a8d120; }
+  </style>
+</helmet>
+<div style="background: #0D0D0D; color: #F0F0F0; min-height: 100%; display: flex; flex-direction: column;">
+
+  <div style="padding: 16px; display: flex; flex-direction: column; gap: 24px; flex-grow: 1;">
+
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="font-size: 24px; font-weight: 800; letter-spacing: -0.5px;">Corpo</div>
+      <div style="display: flex; gap: 4px; background: #1E1E1E; border-radius: 8px; padding: 4px;">
+        <div style="flex-grow: 1; height: 36px; border-radius: 6px; background: #C6F135; display: flex; align-items: center; justify-content: center;"><span style="font-size: 13px; font-weight: 700; color: #000;">Músculos</span></div>
+        <div style="flex-grow: 1; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><span style="font-size: 13px; color: #888;">Peso corporal</span></div>
+      </div>
+    </div>
+
+    <!-- status dos músculos -->
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: baseline; gap: 8px;">
+        <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: #888; flex-grow: 1;">Dias sem treinar</div>
+        <div style="font-size: 11px; color: #888;">2 no limite</div>
+      </div>
+      <div style="background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 4px 16px;">
+
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08);">
+          <div style="width: 8px; height: 8px; border-radius: 99px; background: #ff6b6b; flex-shrink: 0;"></div>
+          <div style="font-size: 15px; font-weight: 500; flex-grow: 1;">Panturrilha</div>
+          <div style="font-size: 11px; font-weight: 600; color: #FF7A3D; background: rgba(255,122,61,0.16); padding: 3px 8px; border-radius: 99px;">vôlei</div>
+          <div style="font-size: 20px; font-weight: 700; letter-spacing: -0.3px; color: #ff6b6b; width: 24px; text-align: right;">9</div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08);">
+          <div style="width: 8px; height: 8px; border-radius: 99px; background: #ff6b6b; flex-shrink: 0;"></div>
+          <div style="font-size: 15px; font-weight: 500; flex-grow: 1;">Ombros</div>
+          <div style="font-size: 11px; font-weight: 600; color: #FF7A3D; background: rgba(255,122,61,0.16); padding: 3px 8px; border-radius: 99px;">vôlei</div>
+          <div style="font-size: 20px; font-weight: 700; letter-spacing: -0.3px; color: #ff6b6b; width: 24px; text-align: right;">7</div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08);">
+          <div style="width: 8px; height: 8px; border-radius: 99px; background: #fac775; flex-shrink: 0;"></div>
+          <div style="font-size: 15px; font-weight: 500; flex-grow: 1;">Costas</div>
+          <div style="font-size: 20px; font-weight: 700; letter-spacing: -0.3px; color: #fac775; width: 24px; text-align: right;">5</div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08);">
+          <div style="width: 8px; height: 8px; border-radius: 99px; background: #C6F135; flex-shrink: 0;"></div>
+          <div style="font-size: 15px; font-weight: 500; flex-grow: 1;">Quadríceps</div>
+          <div style="font-size: 11px; font-weight: 600; color: #FF7A3D; background: rgba(255,122,61,0.16); padding: 3px 8px; border-radius: 99px;">vôlei</div>
+          <div style="font-size: 20px; font-weight: 700; letter-spacing: -0.3px; color: #C6F135; width: 24px; text-align: right;">2</div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0;">
+          <div style="width: 8px; height: 8px; border-radius: 99px; background: #C6F135; flex-shrink: 0;"></div>
+          <div style="font-size: 15px; font-weight: 500; flex-grow: 1;">Peito</div>
+          <div style="font-size: 20px; font-weight: 700; letter-spacing: -0.3px; color: #C6F135; width: 24px; text-align: right;">1</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- calendário -->
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: baseline; gap: 8px;">
+        <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: #888; flex-grow: 1;">Setembro</div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="display: flex; align-items: center; gap: 5px; font-size: 11px; color: #888;"><span style="width: 6px; height: 6px; border-radius: 99px; background: #C6F135;"></span>Academia</span>
+          <span style="display: flex; align-items: center; gap: 5px; font-size: 11px; color: #888;"><span style="width: 6px; height: 6px; border-radius: 99px; background: #FF7A3D;"></span>Vôlei</span>
+        </div>
+      </div>
+      <div style="background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px;">
+          <div style="font-size: 11px; color: #888; text-align: center;">D</div>
+          <div style="font-size: 11px; color: #888; text-align: center;">S</div>
+          <div style="font-size: 11px; color: #888; text-align: center;">T</div>
+          <div style="font-size: 11px; color: #888; text-align: center;">Q</div>
+          <div style="font-size: 11px; color: #888; text-align: center;">Q</div>
+          <div style="font-size: 11px; color: #888; text-align: center;">S</div>
+          <div style="font-size: 11px; color: #888; text-align: center;">S</div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px;">
+          <div style="height: 36px;"></div>
+          <div style="height: 36px; border-radius: 8px; background: #1E1E1E; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #888;">1</div>
+          <div style="height: 36px; border-radius: 8px; background: rgba(198,241,53,0.16); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #C6F135;">2</div>
+          <div style="height: 36px; border-radius: 8px; background: #1E1E1E; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #888;">3</div>
+          <div style="height: 36px; border-radius: 8px; background: rgba(255,122,61,0.16); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #FF7A3D;">4</div>
+          <div style="height: 36px; border-radius: 8px; background: rgba(198,241,53,0.16); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #C6F135;">5</div>
+          <div style="height: 36px; border-radius: 8px; background: #1E1E1E; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #888;">6</div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px;">
+          <div style="height: 36px; border-radius: 8px; background: rgba(198,241,53,0.16); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #C6F135;">7</div>
+          <div style="height: 36px; border-radius: 8px; border: 1px solid #C6F135; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #F0F0F0;">8</div>
+          <div style="height: 36px;"></div>
+          <div style="height: 36px;"></div>
+          <div style="height: 36px;"></div>
+          <div style="height: 36px;"></div>
+          <div style="height: 36px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 12px;">
+      <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;">
+        <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: #888;">Peso corporal</div>
+        <div style="font-size: 20px; font-weight: 700; letter-spacing: -0.3px;">79,4 kg <span style="font-size: 13px; font-weight: 400; color: #97c459;">−0,6 no mês</span></div>
+      </div>
+      <div style="font-size: 11px; font-weight: 600; color: #888; border: 1px solid rgba(255,255,255,0.08); border-radius: 99px; padding: 8px 12px;">Registrar</div>
+    </div>
+
+  </div>
+
+  <div style="display: flex; gap: 4px; padding: 8px; border-top: 1px solid rgba(255,255,255,0.08); background: #0D0D0D; position: sticky; bottom: 0;">
+    <div style="flex-grow: 1; height: 56px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span style="font-size: 11px; color: #888;">Início</span>
+    </div>
+    <div style="flex-grow: 1; height: 56px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span style="font-size: 11px; color: #888;">Progresso</span>
+    </div>
+    <div style="flex-grow: 1; height: 56px; border-radius: 8px; background: rgba(198,241,53,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#C6F135" stroke-width="2" stroke-linecap="round"><path d="M12 21c-4-3-7-6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4-3 7-7 10z"/></svg>
+      <span style="font-size: 11px; font-weight: 600; color: #C6F135;">Corpo</span>
+    </div>
+    <div style="flex-grow: 1; height: 56px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+      <span style="font-size: 11px; color: #888;">Social</span>
+    </div>
+    <div style="flex-grow: 1; height: 56px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span style="font-size: 11px; color: #888;">Perfil</span>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

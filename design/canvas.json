@@ -1,0 +1,26 @@
+{
+  "artboards": [
+    { "file": "Sistema.dc.html", "x": 0, "y": 0, "w": 720, "h": 1780, "title": "Sistema visual" },
+    { "file": "Main.dc.html", "x": 0, "y": 1900, "w": 390, "h": 1240, "title": "Início" },
+    { "file": "Progresso.dc.html", "x": 470, "y": 1900, "w": 390, "h": 1580, "title": "Progresso" },
+    { "file": "Corpo.dc.html", "x": 940, "y": 1900, "w": 390, "h": 900, "title": "Corpo" },
+    { "file": "Social.dc.html", "x": 1410, "y": 1900, "w": 390, "h": 1120, "title": "Social" }
+  ],
+  "annotations": [
+    {
+      "id": "diagnostico",
+      "x": 800,
+      "y": 0,
+      "w": 300,
+      "text": "O que estava errado, medido no index.html:\n\n· 15 tamanhos de fonte, 112 das 162 ocorrências entre 11 e 13px — nada tem hierarquia\n· 170 estilos inline — cada card decide seu espaçamento na hora, nada se alinha\n· até 7 itens na barra de baixo\n· abas dentro de abas em 3 níveis\n\nA paleta nunca foi o problema."
+    },
+    {
+      "id": "navegacao",
+      "x": 800,
+      "y": 420,
+      "w": 300,
+      "text": "Nav de 5:\nInício · Progresso · Corpo · Social · Perfil\n\nCorpo recolhe agenda muscular, calendário e peso corporal — que morava em Progresso sem pertencer lá.\n\nAlunos e Admin saem da barra e viram entradas no Perfil.\n\nO comparativo do mês deixa de ser sub-sub-aba: toca no amigo."
+    }
+  ],
+  "launch": { "view": "canvas" }
+}

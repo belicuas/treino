@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Inter', system-ui, sans-serif; }
+    a { color: #C6F135; } a:hover { color: #a8d120; }
+  </style>
+</helmet>
+<div style="background: #0D0D0D; color: #F0F0F0; min-height: 100%; display: flex; flex-direction: column;">
+
+  <!-- topo -->
+  <div style="display: flex; align-items: center; gap: 12px; padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+    <div style="width: 32px; height: 32px; border-radius: 99px; background: #C6F135; color: #000; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center;">P</div>
+    <div style="font-size: 15px; font-weight: 600; flex-grow: 1;">Pedro</div>
+    <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: #888; border: 1px solid rgba(255,255,255,0.08); border-radius: 99px; padding: 7px 12px;">Sair</div>
+  </div>
+
+  <div style="padding: 16px; display: flex; flex-direction: column; gap: 24px; flex-grow: 1;">
+
+    <!-- saudação -->
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: #888;">Segunda, 8 de setembro</div>
+      <div style="font-size: 24px; font-weight: 800; letter-spacing: -0.5px;">Bom treino, Pedro</div>
+    </div>
+
+    <!-- alerta vôlei -->
+    <div style="background: rgba(255,122,61,0.1); border: 1px solid rgba(255,122,61,0.35); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#FF7A3D" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 3c3 4 3 14 0 18M3.5 9h17M5 17c4-2 10-2 14 0"/></svg>
+        <div style="font-size: 13px; font-weight: 700; color: #FF7A3D; flex-grow: 1;">Atenção vôlei</div>
+        <div style="font-size: 11px; color: #888;">2 músculos</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; align-items: baseline; gap: 8px;">
+          <span style="font-size: 15px; font-weight: 500; flex-grow: 1;">Ombros</span>
+          <span style="font-size: 15px; font-weight: 700; color: #FF7A3D;">7</span>
+          <span style="font-size: 11px; color: #888;">dias · limite 6</span>
+        </div>
+        <div style="display: flex; align-items: baseline; gap: 8px;">
+          <span style="font-size: 15px; font-weight: 500; flex-grow: 1;">Panturrilha</span>
+          <span style="font-size: 15px; font-weight: 700; color: #FF7A3D;">9</span>
+          <span style="font-size: 11px; color: #888;">dias · limite 7</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- semana -->
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: #888;">Esta semana</div>
+      <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px;">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;"><span style="font-size: 11px; color: #888;">D</span><div style="width: 100%; height: 44px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); background: #161616;"></div></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;"><span style="font-size: 11px; color: #888;">S</span><div style="width: 100%; height: 44px; border-radius: 8px; background: #C6F135; display: flex; align-items: center; justify-content: center;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;"><span style="font-size: 11px; color: #888;">T</span><div style="width: 100%; height: 44px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); background: #161616;"></div></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;"><span style="font-size: 11px; color: #888;">Q</span><div style="width: 100%; height: 44px; border-radius: 8px; background: #FF7A3D; display: flex; align-items: center; justify-content: center;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;"><span style="font-size: 11px; color: #888;">Q</span><div style="width: 100%; height: 44px; border-radius: 8px; background: #C6F135; display: flex; align-items: center; justify-content: center;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;"><span style="font-size: 11px; font-weight: 700; color: #F0F0F0;">S</span><div style="width: 100%; height: 44px; border-radius: 8px; border: 1px solid #C6F135; background: rgba(198,241,53,0.1);"></div></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;"><span style="font-size: 11px; color: #888;">S</span><div style="width: 100%; height: 44px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); background: #161616;"></div></div>
+      </div>
+    </div>
+
+    <!-- números -->
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
+      <div style="background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px;">
+        <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: #888;">Semana</div>
+        <div style="font-size: 40px; font-weight: 900; letter-spacing: -1.5px; line-height: 1;">3</div>
+      </div>
+      <div style="background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px;">
+        <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: #888;">Mês</div>
+        <div style="font-size: 40px; font-weight: 900; letter-spacing: -1.5px; line-height: 1;">11</div>
+      </div>
+      <div style="background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px;">
+        <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: #888;">Sequência</div>
+        <div style="font-size: 40px; font-weight: 900; letter-spacing: -1.5px; line-height: 1; color: #C6F135;">2</div>
+      </div>
+    </div>
+
+    <!-- ação principal -->
+    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; border-radius: 8px; background: #C6F135;">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="#000"><polygon points="6 4 20 12 6 20"/></svg>
+      <span style="font-size: 15px; font-weight: 700; color: #000;">Começar treino</span>
+    </div>
+
+    <!-- modelos -->
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: #888; flex-grow: 1;">Seus modelos</div>
+        <div style="display: flex; align-items: center; gap: 4px; border: 1px solid rgba(255,255,255,0.08); border-radius: 99px; padding: 7px 12px;">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#F0F0F0" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span style="font-size: 11px; font-weight: 600;">Novo</span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; align-items: flex-start; gap: 8px;">
+            <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;">
+              <div style="font-size: 15px; font-weight: 600;">Peito + Tríceps</div>
+              <div style="font-size: 13px; color: #888;">5 exercícios · 55 min</div>
+            </div>
+            <div style="font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 99px; background: rgba(198,241,53,0.14); color: #C6F135; white-space: nowrap;">Peito</div>
+          </div>
+          <div style="height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08);"><div style="width: 100%; height: 100%; border-radius: 2px; background: #C6F135;"></div></div>
+        </div>
+
+        <div style="background: #161616; border: 1px solid rgba(255,122,61,0.35); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; align-items: flex-start; gap: 8px;">
+            <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#FF7A3D" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 3c3 4 3 14 0 18M3.5 9h17M5 17c4-2 10-2 14 0"/></svg>
+                <div style="font-size: 15px; font-weight: 600;">Vôlei — Salto</div>
+              </div>
+              <div style="font-size: 13px; color: #888;">4 exercícios · 50 min</div>
+            </div>
+            <div style="font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 99px; background: rgba(255,122,61,0.16); color: #FF7A3D; white-space: nowrap;">Salto</div>
+          </div>
+          <div style="height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08);"><div style="width: 45%; height: 100%; border-radius: 2px; background: #FF7A3D;"></div></div>
+        </div>
+
+        <div style="background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; align-items: flex-start; gap: 8px;">
+            <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;">
+              <div style="font-size: 15px; font-weight: 600;">Pernas</div>
+              <div style="font-size: 13px; color: #888;">5 exercícios · 65 min</div>
+            </div>
+            <div style="font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 99px; background: rgba(250,199,117,0.16); color: #fac775; white-space: nowrap;">Pernas</div>
+          </div>
+          <div style="height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08);"><div style="width: 60%; height: 100%; border-radius: 2px; background: #C6F135;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- últimos dias -->
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: #888; flex-grow: 1;">Últimos 5 dias</div>
+        <div style="font-size: 11px; font-weight: 600; color: #888; border: 1px solid rgba(255,255,255,0.08); border-radius: 99px; padding: 7px 12px;">Esqueci de marcar</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 12px;">
+          <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;">
+            <div style="font-size: 15px; font-weight: 600;">Peito + Tríceps</div>
+            <div style="font-size: 13px; color: #888;">9.800 kg · 52 min</div>
+          </div>
+          <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: #888;">Ontem</div>
+        </div>
+        <div style="background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 12px;">
+          <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;">
+            <div style="font-size: 15px; font-weight: 600;">Vôlei — Salto</div>
+            <div style="font-size: 13px; color: #888;">5.200 kg · 48 min</div>
+          </div>
+          <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: #888;">Sex</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- nav -->
+  <div style="display: flex; gap: 4px; padding: 8px; border-top: 1px solid rgba(255,255,255,0.08); background: #0D0D0D; position: sticky; bottom: 0;">
+    <div style="flex-grow: 1; height: 56px; border-radius: 8px; background: rgba(198,241,53,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#C6F135" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span style="font-size: 11px; font-weight: 600; color: #C6F135;">Início</span>
+    </div>
+    <div style="flex-grow: 1; height: 56px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span style="font-size: 11px; color: #888;">Progresso</span>
+    </div>
+    <div style="flex-grow: 1; height: 56px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"><path d="M12 21c-4-3-7-6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4-3 7-7 10z"/></svg>
+      <span style="font-size: 11px; color: #888;">Corpo</span>
+    </div>
+    <div style="flex-grow: 1; height: 56px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+      <span style="font-size: 11px; color: #888;">Social</span>
+    </div>
+    <div style="flex-grow: 1; height: 56px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span style="font-size: 11px; color: #888;">Perfil</span>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>
