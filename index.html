@@ -45,8 +45,6 @@
   .btn-main{width:100%;padding:13px;background:var(--accent);color:#000;font-weight:700;font-size:15px;border:none;border-radius:var(--radius-sm);cursor:pointer;transition:background .15s;}
   .btn-main:hover{background:var(--accent2);}
   .auth-error{font-size:13px;color:var(--danger);margin-top:10px;text-align:center;min-height:20px;}
-  .demo-hint{font-size:12px;color:var(--muted);text-align:center;margin-top:14px;background:var(--bg3);padding:10px;border-radius:var(--radius-sm);line-height:1.6;}
-  .demo-hint strong{color:var(--accent);}
 
   /* PENDING BANNER */
   .pending-banner{background:rgba(250,199,117,0.12);border:1px solid rgba(250,199,117,0.3);color:var(--warn);font-size:12px;padding:8px 14px;text-align:center;}
@@ -194,6 +192,27 @@
   .exercise-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
   .ex-pill{font-size:12px;padding:6px 12px;border-radius:99px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);cursor:pointer;white-space:nowrap;}
   .ex-pill.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
+
+  /* POR EXERCÍCIO: resumo e lista de vezes que ele foi feito */
+  .ex-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
+  .ex-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:11px 13px;}
+  .ex-stat-lbl{font-size:11px;color:var(--muted);}
+  .ex-stat-val{font-size:17px;font-weight:700;margin-top:2px;}
+  .ex-stat-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+  .ex-stat.pr .ex-stat-val{color:var(--accent);}
+  .ex-reg{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+    padding:11px 13px;margin-bottom:8px;}
+  .ex-reg-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+  .ex-reg-date{font-size:13px;font-weight:600;}
+  .ex-reg-treino{font-size:11px;color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .ex-reg-max{font-size:12px;color:var(--muted);}
+  .ex-reg-sets{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .ex-aviso{font-size:11px;color:var(--warn);background:rgba(250,199,117,0.12);
+    border:1px solid rgba(250,199,117,0.3);border-radius:var(--radius-sm);padding:6px 8px;margin-top:8px;line-height:1.5;}
+  .ex-pr{font-size:11px;font-weight:700;color:#000;background:var(--accent);padding:1px 6px;border-radius:99px;}
+  .btn-ex-ren{background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;
+    font-size:11px;padding:2px 7px;cursor:pointer;}
+  .btn-ex-ren:hover{color:var(--accent);border-color:var(--accent);}
 
   /* MUSCLE STATUS */
   .muscle-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
@@ -362,7 +381,7 @@
   <div class="page" id="page-progress">
     <div class="section-head" style="margin-top:4px"><h2>Progresso</h2></div>
     <div class="segmented">
-      <button class="seg active" onclick="switchProgressTab('carga')">Carga (kg)</button>
+      <button class="seg active" onclick="switchProgressTab('carga')">Por exercício</button>
       <button class="seg" onclick="switchProgressTab('peso')">Peso corporal</button>
       <button class="seg" onclick="switchProgressTab('historico')">Histórico</button>
     </div>
@@ -371,7 +390,9 @@
       <div id="hist-list"></div>
     </div>
     <div id="progress-carga">
+      <input class="hx-filter" id="ex-busca" placeholder="Buscar exercício — ex: supino" oninput="renderProgress()">
       <div class="exercise-pills" id="exercise-pills"></div>
+      <div id="ex-resumo"></div>
       <div class="chart-box"><div id="load-chart"></div></div>
       <div id="load-history"></div>
     </div>
@@ -724,20 +745,71 @@ async function pullAllGroups(){
   }catch(e){ return false; }
 }
 
+// ----- ESCRITA POR CAMPO -----
+// O app gravava o perfil INTEIRO a cada alteração: um cliente com estado
+// incompleto apagava do banco o que não conhecia (foi assim que um usuário
+// perdeu name e email minutos depois de ser criado). Agora guardamos uma
+// cópia do que o servidor tem e enviamos só as chaves que mudaram, com a
+// marca __merge; o gatilho do banco (sql/7) funde o patch no que já existe.
+// Limite consciente: isso altera e cria chaves, nunca REMOVE uma chave de
+// primeiro nível — o app nunca faz isso (esvazia arrays, não os apaga).
+let REMOTO={};          // username -> perfil como o servidor devolveu
+let MERGE_OK=null;      // o banco já tem o sql/7? (null = ainda não sabemos)
+
+function marcaRemoto(username,data){
+  try{ REMOTO[username]=JSON.parse(JSON.stringify(data)); }catch(e){ delete REMOTO[username]; }
+}
+// só as chaves de primeiro nível diferentes do que o servidor tem.
+// null = sem referência confiável, mande o objeto inteiro.
+function patchDe(username,data){
+  const base=REMOTO[username];
+  if(!base||typeof base!=='object') return null;
+  const patch={};
+  Object.keys(data).forEach(k=>{
+    if(JSON.stringify(data[k])!==JSON.stringify(base[k])) patch[k]=data[k];
+  });
+  return patch;
+}
+// enquanto o sql/7 não estiver aplicado, mandar um patch APAGARIA campos.
+// Então perguntamos ao banco uma vez e só ligamos o modo patch se ele responder.
+async function mergeSuportado(){
+  if(MERGE_OK!==null) return MERGE_OK;
+  if(!sb){ return false; }
+  try{
+    const {error}=await sb.rpc('fittrack_merge_ok');
+    MERGE_OK=!error;
+  }catch(e){ MERGE_OK=false; }
+  return MERGE_OK;
+}
+
 // envia um usuário para o Supabase (não bloqueia a UI)
 async function pushUser(username,data){
   if(!sb) return;
   const authId = data&&data.authId ? data.authId : null;
   try{
+    let corpo=data;
+    if(await mergeSuportado()){
+      const patch=patchDe(username,data);
+      if(patch){
+        if(Object.keys(patch).length===0){ online=true; return; }   // nada mudou
+        corpo=Object.assign({__merge:true},patch);
+      }
+    }
     // tenta ATUALIZAR primeiro (coberto pela política "logados atualizam")
     const {data:updated,error:upErr}=await sb.from(TABLE)
-      .update({data,auth_id:authId,updated_at:new Date().toISOString()})
+      .update({data:corpo,auth_id:authId,updated_at:new Date().toISOString()})
       .eq('username',username)
-      .select();
+      .select('username,data');
     if(upErr) throw upErr;
     // se não atualizou nenhuma linha, é uma conta nova -> INSERE
     if(!updated || updated.length===0){
-      await sb.from(TABLE).insert({username,data,auth_id:authId,updated_at:new Date().toISOString()});
+      const {data:inserido}=await sb.from(TABLE)
+        .insert({username,data,auth_id:authId,updated_at:new Date().toISOString()})
+        .select('username,data');
+      if(inserido&&inserido[0]) marcaRemoto(username,inserido[0].data);
+    } else {
+      // o gatilho pode ter completado campos: a verdade é o que voltou
+      marcaRemoto(username,updated[0].data);
     }
     online=true;
   }catch(e){ online=false; }
@@ -749,7 +821,7 @@ async function pullAllUsers(){
     const {data,error}=await sb.from(TABLE).select('username,data');
     if(error) throw error;
     const map={};
-    (data||[]).forEach(row=>{ map[row.username]=row.data; });
+    (data||[]).forEach(row=>{ map[row.username]=row.data; marcaRemoto(row.username,row.data); });
     USERS=map; store.set('users',USERS); online=true;
     return true;
   }catch(e){ online=false; return false; }
@@ -774,8 +846,8 @@ function subscribeRealtime(){
       .on('postgres_changes',{event:'*',schema:'public',table:TABLE},payload=>{
         const row=payload.new||payload.old;
         if(!row||!row.username) return;
-        if(payload.eventType==='DELETE'){ delete USERS[row.username]; }
-        else { USERS[row.username]=row.data; }
+        if(payload.eventType==='DELETE'){ delete USERS[row.username]; delete REMOTO[row.username]; }
+        else { USERS[row.username]=row.data; marcaRemoto(row.username,row.data); }
         store.set('users',USERS);
         if(document.getElementById('app-screen').style.display!=='none') refreshActivePage();
       })
@@ -847,69 +919,6 @@ function groupTag(objOrStr){
   const g = typeof objOrStr==='string' ? objOrStr : (groupsOf(objOrStr)[0]||'');
   if(g.startsWith('Vôlei')) return 'tag-volei';
   return TAGS[g]||'tag-blue';
-}
-
-// ===== SEED =====
-function seedDemo(){
-  const users=getUsers();
-  if(users['pedrobelicuas']) return;
-  users['pedrobelicuas']={
-    name:'Pedro (Admin)', email:'pedro@fittrack.app', password:'lopes', role:'admin', status:'approved',
-    workouts:[
-      {id:'w1',name:'Peito + Tríceps',group:'Peito',duration:55,exercises:[
-        {name:'Supino reto',sets:4,reps:10},{name:'Supino inclinado',sets:3,reps:12},
-        {name:'Crucifixo',sets:3,reps:15},{name:'Tríceps pulley',sets:4,reps:12},{name:'Mergulho',sets:3,reps:15}]},
-      {id:'w3',name:'Pernas',group:'Pernas',duration:65,exercises:[
-        {name:'Agachamento',sets:4,reps:8},{name:'Leg press',sets:4,reps:12},
-        {name:'Cadeira extensora',sets:3,reps:15},{name:'Mesa flexora',sets:3,reps:15},{name:'Panturrilha',sets:4,reps:20}]},
-      {id:'wv',name:'Vôlei - Salto',group:'Vôlei - Salto e Potência',volei:true,duration:50,exercises:[
-        {name:'Agachamento com salto',sets:4,reps:10},{name:'Afundo',sets:3,reps:12},
-        {name:'Levantamento terra',sets:4,reps:8},{name:'Prancha',sets:3,reps:45}]}
-    ],
-    completedSessions:[
-      {workoutId:'w1',workoutName:'Peito + Tríceps',group:'Peito',date:daysAgo(1),volume:9800},
-      {workoutId:'wv',workoutName:'Vôlei - Salto',group:'Vôlei - Salto e Potência',volei:true,date:daysAgo(0),volume:5200},
-      {workoutId:'w3',workoutName:'Pernas',group:'Pernas',date:daysAgo(4),volume:14200},
-      {workoutId:'w1',workoutName:'Peito + Tríceps',group:'Peito',date:daysAgo(8),volume:9400},
-    ],
-    loads:{'Supino reto':[{date:daysAgo(30),kg:60},{date:daysAgo(20),kg:65},{date:daysAgo(10),kg:70},{date:daysAgo(1),kg:75}],
-           'Agachamento':[{date:daysAgo(25),kg:80},{date:daysAgo(12),kg:90},{date:daysAgo(4),kg:100}]},
-    weights:[{date:daysAgo(28),kg:82},{date:daysAgo(21),kg:81.5},{date:daysAgo(14),kg:81},{date:daysAgo(7),kg:80.4},{date:daysAgo(1),kg:80}],
-    friends:['carlos'], students:['carlos'], coaches:[], coachRequests:[], coachRequestsSent:[]
-  };
-  users['carlos']={
-    name:'Carlos Demo', email:'carlos@fittrack.app', password:'demo123', role:'user', status:'approved',
-    workouts:[
-      {id:'wc1',name:'Treino A — Full Body',group:'Full Body',duration:60,createdBy:'pedrobelicuas',coachName:'Pedro (Admin)',exercises:[
-        {name:'Agachamento',sets:4,reps:10},{name:'Supino reto',sets:4,reps:10},{name:'Remada',sets:4,reps:12},{name:'Desenvolvimento',sets:3,reps:12}]}
-    ],completedSessions:[
-      {workoutId:'x',workoutName:'Full Body',group:'Full Body',date:daysAgo(0),volume:11500},
-      {workoutId:'x',workoutName:'Pernas',group:'Pernas',date:daysAgo(2),volume:16800},
-      {workoutId:'x',workoutName:'Peito',group:'Peito',date:daysAgo(5),volume:8900},
-      {workoutId:'x',workoutName:'Costas',group:'Costas',date:daysAgo(9),volume:12300},
-      {workoutId:'x',workoutName:'Pernas',group:'Pernas',date:daysAgo(12),volume:15400}],
-    loads:{'Supino reto':[{date:daysAgo(20),kg:50},{date:daysAgo(5),kg:55}]},
-    weights:[{date:daysAgo(9),kg:80},{date:daysAgo(2),kg:79.5}],
-    friends:['pedrobelicuas'], coaches:['pedrobelicuas'], students:[], coachRequests:[], coachRequestsSent:[]
-  };
-  users['ana']={
-    name:'Ana Beatriz', email:'ana@fittrack.app', password:'pass123', role:'user', status:'pending',
-    workouts:[],completedSessions:[
-      {workoutId:'x',workoutName:'Cardio',group:'Cardio',date:daysAgo(1),volume:3200},
-      {workoutId:'x',workoutName:'Full Body',group:'Full Body',date:daysAgo(6),volume:7800}],
-    loads:{},weights:[{date:daysAgo(9),kg:61.5},{date:daysAgo(1),kg:60.8}],friends:[]
-  };
-  users['joao']={
-    name:'João Pedro', email:'joao@fittrack.app', password:'pass123', role:'user', status:'pending',
-    workouts:[],completedSessions:[],loads:{},weights:[],friends:[]
-  };
-  saveUsers(users);
-  // envia os usuários iniciais para o Supabase (apenas na primeira vez)
-  Object.keys(users).forEach(k=>pushUser(k,users[k]));
-  // grupo de exemplo (só cria se ainda não houver grupos)
-  if(Object.keys(getGroups()).length===0){
-    saveGroup({id:'g_demo',name:'Galera da Academia',metric:'volume',owner:'pedrobelicuas',admins:['pedrobelicuas'],members:['pedrobelicuas','carlos','ana'],createdAt:todayStr()});
-  }
 }
 
 // ===== AUTH =====
@@ -1836,30 +1845,235 @@ function histToggle(sid){
   const el=document.getElementById('hist-'+sid);
   if(el) el.classList.toggle('open',!!histAbertos[sid]);
 }
+// ===== POR EXERCÍCIO =====
+// O histórico navegava por treino; faltava o corte inverso — "todas as vezes
+// que eu fiz Supino". As sessões já guardam série por série, então dá para
+// montar isso sem gravar nada novo.
 let selectedExercise=null;
+
+function jsStr(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+
+// dias em que existe sessão com série por série gravada. Nesses dias, a sessão
+// manda; o loads é só um resumo derivado dela.
+function datasComDetalhe(data){
+  const s=new Set();
+  (data.completedSessions||[]).forEach(x=>{
+    if((x.exercises||[]).length) s.add(x.date);
+  });
+  return s;
+}
+
+// nome do exercício -> todas as vezes que ele foi feito, em ordem de data
+function exRegistros(user){
+  const porNome={};
+  (user.completedSessions||[]).forEach(s=>{
+    (s.exercises||[]).forEach(ex=>{
+      if(!ex||!ex.name) return;
+      const sets=(ex.sets||[]).map(x=>({reps:Number(x.reps)||0,kg:Number(x.kg)||0}));
+      const kgs=sets.map(x=>x.kg).filter(v=>v>0);
+      (porNome[ex.name]=porNome[ex.name]||[]).push({
+        date:s.date, sid:s.sid||s.date, treino:s.workoutName||'',
+        sets, max:kgs.length?Math.max(...kgs):0,
+        tonelagem:Math.round(sets.reduce((t,x)=>t+x.kg*x.reps,0)),
+        reps:sets.reduce((t,x)=>t+x.reps,0),
+        detalhe:true
+      });
+    });
+  });
+  // registros de antes do app guardar o detalhe das séries: só a carga máxima.
+  // Onde existe sessão detalhada, ela é a verdade — senão um exercício renomeado
+  // reapareceria com o nome velho, vindo do loads antigo.
+  const datasDetalhadas=datasComDetalhe(user);
+  Object.entries(user.loads||{}).forEach(([nome,hist])=>{
+    (hist||[]).forEach(r=>{
+      if(datasDetalhadas.has(r.date)) return;
+      const lista=porNome[nome]=porNome[nome]||[];
+      if(lista.some(x=>x.date===r.date)) return;
+      lista.push({date:r.date,sid:r.date,treino:'',sets:[],
+        max:Number(r.kg)||0,tonelagem:0,reps:0,detalhe:false});
+    });
+  });
+  Object.values(porNome).forEach(l=>l.sort((a,b)=>(a.date||'').localeCompare(b.date||'')));
+  return porNome;
+}
+
+function exResumo(regs){
+  let pr=null, melhor=null, ton=0;
+  regs.forEach(r=>{
+    if(r.max>0&&(!pr||r.max>pr.kg)) pr={kg:r.max,date:r.date};
+    ton+=r.tonelagem;
+    r.sets.forEach(s=>{
+      if(s.kg>0&&s.reps>0){
+        const t=s.kg*s.reps;
+        if(!melhor||t>melhor.t) melhor={t,kg:s.kg,reps:s.reps,date:r.date};
+      }
+    });
+  });
+  const comCarga=regs.filter(r=>r.max>0);
+  const ultima=comCarga.length?comCarga[comCarga.length-1]:null;
+  const penultima=comCarga.length>1?comCarga[comCarga.length-2]:null;
+  const delta=(ultima&&penultima)?Math.round((ultima.max-penultima.max)*10)/10:null;
+  return {pr,melhor,ton,ultima,penultima,delta,vezes:regs.length};
+}
+
+// dois aparelhos com o mesmo nome viram um "+47 kg" que nunca aconteceu.
+// O app não tem como saber qual é qual — mas pode desconfiar em voz alta.
+function exSaltoSuspeito(anterior,atual){
+  if(!anterior||!atual||anterior<=0||atual<=0) return false;
+  const dif=Math.abs(atual-anterior);
+  return dif>=15 && dif/anterior>=0.4;
+}
+
 function renderProgress(){
   const user=getUsers()[currentUser()];
-  const loads=user.loads||{};
-  const exNames=Object.keys(loads).filter(n=>loads[n].length>0);
-  if(!selectedExercise||!exNames.includes(selectedExercise)) selectedExercise=exNames[0]||null;
-  document.getElementById('exercise-pills').innerHTML=exNames.length?exNames.map(n=>`
-    <div class="ex-pill ${n===selectedExercise?'active':''}" onclick="selectExercise('${n.replace(/'/g,"\\'")}')">${n}</div>`).join('')
-    :'<div style="font-size:13px;color:var(--muted)">Registre cargas finalizando um treino para ver o gráfico aqui.</div>';
-  if(selectedExercise){
-    const data=loads[selectedExercise].slice().sort((a,b)=>a.date.localeCompare(b.date));
-    document.getElementById('load-chart').innerHTML=lineChart(data.map(d=>({x:d.date,y:d.kg})),'kg','var(--accent)');
-    document.getElementById('load-history').innerHTML=`<div class="card"><div style="font-size:13px;font-weight:600;margin-bottom:10px">Histórico — ${selectedExercise}</div>`+
-      data.slice().reverse().map(d=>`<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid var(--border)"><span style="color:var(--muted)">${fmtDate(d.date)}</span><strong>${d.kg} kg</strong></div>`).join('')+'</div>';
-  } else {
+  const porNome=exRegistros(user);
+  // mais recentes primeiro: o que você treinou ontem interessa mais
+  const todos=Object.keys(porNome).filter(n=>porNome[n].length).sort((a,b)=>{
+    const ua=porNome[a][porNome[a].length-1].date||'', ub=porNome[b][porNome[b].length-1].date||'';
+    return ub.localeCompare(ua);
+  });
+  const campo=document.getElementById('ex-busca');
+  const busca=(campo&&campo.value||'').trim().toLowerCase();
+  const nomes=busca?todos.filter(n=>n.toLowerCase().includes(busca)):todos;
+  if(!selectedExercise||!porNome[selectedExercise]||(busca&&nomes.length&&!nomes.includes(selectedExercise))){
+    selectedExercise=nomes[0]||(busca?null:todos[0])||null;
+  }
+
+  document.getElementById('exercise-pills').innerHTML = nomes.length
+    ? nomes.map(n=>`<div class="ex-pill ${n===selectedExercise?'active':''}" onclick="selectExercise('${jsStr(n)}')">${n} <span style="opacity:.6">${porNome[n].length}</span></div>`).join('')
+    : `<div style="font-size:13px;color:var(--muted)">${todos.length?'Nenhum exercício com esse nome.':'Finalize um treino para o histórico por exercício aparecer aqui.'}</div>`;
+
+  const boxResumo=document.getElementById('ex-resumo');
+  if(!selectedExercise){
+    boxResumo.innerHTML='';
     document.getElementById('load-chart').innerHTML='<div class="chart-empty">Sem dados de carga ainda.</div>';
     document.getElementById('load-history').innerHTML='';
+    renderWeight();
+    const ph0=document.getElementById('progress-historico');
+    if(ph0 && ph0.style.display!=='none') renderHistorico();
+    return;
   }
+
+  const regs=porNome[selectedExercise];
+  const res=exResumo(regs);
+  const diasDesde=res.ultima?daysBetween(res.ultima.date,todayStr()):null;
+  boxResumo.innerHTML=`<div class="ex-stats">
+    <div class="ex-stat pr">
+      <div class="ex-stat-lbl">Recorde de carga</div>
+      <div class="ex-stat-val">${res.pr?res.pr.kg+' kg':'—'}</div>
+      <div class="ex-stat-sub">${res.pr?fmtDate(res.pr.date):'sem carga registrada'}</div>
+    </div>
+    <div class="ex-stat">
+      <div class="ex-stat-lbl">Melhor série</div>
+      <div class="ex-stat-val">${res.melhor?`${res.melhor.kg} × ${res.melhor.reps}`:'—'}</div>
+      <div class="ex-stat-sub">${res.melhor?fmtDate(res.melhor.date):'sem séries detalhadas'}</div>
+    </div>
+    <div class="ex-stat">
+      <div class="ex-stat-lbl">Última vez</div>
+      <div class="ex-stat-val">${res.ultima?(diasDesde===0?'Hoje':diasDesde+(diasDesde===1?' dia':' dias')):'—'}</div>
+      <div class="ex-stat-sub">${res.ultima?`${res.ultima.max} kg${res.delta!==null?` · ${res.delta>0?'+':''}${res.delta} kg vs anterior`:''}`:''}</div>
+    </div>
+    <div class="ex-stat">
+      <div class="ex-stat-lbl">Vezes / total levantado</div>
+      <div class="ex-stat-val">${res.vezes}</div>
+      <div class="ex-stat-sub">${res.ton?res.ton.toLocaleString('pt-BR')+' kg':'—'}</div>
+    </div>
+  </div>`;
+
+  const pontos=regs.filter(r=>r.max>0).map(r=>({x:r.date,y:r.max}));
+  document.getElementById('load-chart').innerHTML=pontos.length
+    ? lineChart(pontos,'kg','var(--accent)')
+    : '<div class="chart-empty">Sem carga registrada neste exercício.</div>';
+
+  // uma linha por vez que o exercício foi feito, da mais recente para trás
+  const lista=regs.slice().reverse();
+  document.getElementById('load-history').innerHTML=lista.map((r,i)=>{
+    const anterior=lista[i+1];                       // o registro imediatamente anterior no tempo
+    const antMax=anterior?anterior.max:null;
+    const delta=(r.max>0&&antMax>0)?Math.round((r.max-antMax)*10)/10:null;
+    let badge='';
+    if(delta!==null){
+      if(delta>0)      badge=`<span class="delta delta-up">+${delta} kg</span>`;
+      else if(delta<0) badge=`<span class="delta delta-down">${delta} kg</span>`;
+      else             badge=`<span class="delta delta-same">manteve</span>`;
+    }
+    const ehPr=res.pr&&r.max===res.pr.kg&&r.date===res.pr.date;
+    const sets=r.sets.map((st,k)=>
+      `<span class="hx-set">${k+1}ª <strong>${st.reps||0}</strong> reps${st.kg?` · <strong>${st.kg}</strong> kg`:''}</span>`).join('');
+    const aviso=exSaltoSuspeito(antMax,r.max)
+      ? `<div class="ex-aviso">⚠️ ${antMax} kg → ${r.max} kg de uma vez. Se forem aparelhos diferentes com o mesmo nome, renomeie um deles — o histórico separa em duas curvas e para de mentir.</div>` : '';
+    return `<div class="ex-reg">
+      <div class="ex-reg-head">
+        <span class="ex-reg-date">${histDataLabel(r.date)}</span>
+        <span class="ex-reg-treino">${r.treino||''}</span>
+        ${r.max?`<span class="ex-reg-max">máx ${r.max} kg</span>`:''}
+        ${ehPr?'<span class="ex-pr">recorde</span>':''}
+        ${badge}
+        ${r.detalhe?`<button class="btn-ex-ren" onclick="exRenomear('${jsStr(r.sid)}','${jsStr(selectedExercise)}')">renomear</button>`:''}
+      </div>
+      ${sets?`<div class="ex-reg-sets">${sets}</div>`:(r.detalhe?'':'<div class="ex-stat-sub" style="margin-top:6px">registro antigo, sem detalhe de séries</div>')}
+      ${r.tonelagem?`<div class="ex-stat-sub" style="margin-top:6px">${r.reps} reps · ${r.tonelagem.toLocaleString('pt-BR')} kg levantados</div>`:''}
+      ${aviso}
+    </div>`;
+  }).join('');
+
   renderWeight();
   // se o usuário estiver na aba Histórico, atualiza junto
   const ph=document.getElementById('progress-historico');
   if(ph && ph.style.display!=='none') renderHistorico();
 }
 function selectExercise(n){selectedExercise=n;renderProgress();}
+
+// mesmo nome, exercícios diferentes: renomear só nesta sessão separa as curvas
+function exRenomear(sid,nome){
+  const novo=prompt('Como este exercício se chama, nesta sessão?\n\nUse quando o mesmo nome virou dois exercícios diferentes — aparelhos distintos, halter vs barra. O histórico se separa em duas curvas.',nome);
+  if(novo===null) return;
+  const n=novo.trim();
+  if(!n||n===nome) return;
+  const email=currentUser(); const data=getUserData(email);
+  let mexeu=false;
+  (data.completedSessions||[]).forEach(s=>{
+    if((s.sid||s.date)!==sid) return;
+    (s.exercises||[]).forEach(ex=>{ if(ex.name===nome){ ex.name=n; mexeu=true; } });
+  });
+  if(!mexeu){ showToast('Não achei esse registro.'); return; }
+  data.loads=reconstroiLoads(data);
+  saveUserData(email,data);
+  selectedExercise=n;
+  showToast('Renomeado ✓');
+  renderProgress();
+}
+
+// loads = carga máxima por dia de cada exercício. É derivado das sessões;
+// só o que existe apenas no loads antigo (antes do detalhe de séries) é mantido.
+function reconstroiLoads(data){
+  const mapa={};
+  (data.completedSessions||[]).forEach(s=>{
+    (s.exercises||[]).forEach(ex=>{
+      if(!ex||!ex.name) return;
+      const kgs=(ex.sets||[]).map(x=>Number(x.kg)||0).filter(v=>v>0);
+      if(!kgs.length) return;
+      const max=Math.max(...kgs);
+      const porData=mapa[ex.name]=mapa[ex.name]||{};
+      porData[s.date]=Math.max(porData[s.date]||0,max);
+    });
+  });
+  const datasDetalhadas=datasComDetalhe(data);
+  Object.entries(data.loads||{}).forEach(([nome,hist])=>{
+    (hist||[]).forEach(r=>{
+      if(datasDetalhadas.has(r.date)) return;   // a sessão daquele dia já disse a verdade
+      const porData=mapa[nome]=mapa[nome]||{};
+      if(porData[r.date]===undefined) porData[r.date]=Number(r.kg)||0;
+    });
+  });
+  const saida={};
+  Object.entries(mapa).forEach(([nome,porData])=>{
+    const lista=Object.entries(porData).filter(([,kg])=>kg>0)
+      .map(([date,kg])=>({date,kg})).sort((a,b)=>a.date.localeCompare(b.date));
+    if(lista.length) saida[nome]=lista;
+  });
+  return saida;
+}
 
 function renderWeight(){
   const email=currentUser();const user=getUsers()[email];
