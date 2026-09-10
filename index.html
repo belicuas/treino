@@ -68,11 +68,13 @@
 
   /* Em tela de toque a barra de rolagem so ocupa espaco: o dedo ja rola e o
      sistema desenha a sua quando precisa. Some a decoracao, nao a rolagem. */
-  @media (pointer:coarse), (hover:none){
-    /* o documento e quem rola a pagina; o resto pega qualquer container */
-    html, body, *{scrollbar-width:none;-ms-overflow-style:none;}
-    html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar{width:0;height:0;display:none;}
-  }
+  /* Sem barra de rolagem, em qualquer tela. O app e feito para o celular,
+     onde o dedo rola e a barra so ocupa espaco. Tentei antes limitar isso a
+     telas de toque com @media (pointer:coarse) -- nao pegou no aparelho real,
+     e a condicao era complexidade sem beneficio. A rolagem nao muda; some so
+     a decoracao. */
+  html, body, *{scrollbar-width:none;-ms-overflow-style:none;}
+  html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar{width:0;height:0;display:none;}
 
   /* NAV */
   .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;z-index:10;padding-bottom:env(safe-area-inset-bottom);}
