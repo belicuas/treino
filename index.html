@@ -19,15 +19,15 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   :root{
-    --bg:#0D0D0D;--bg2:#161616;--bg3:#1E1E1E;
-    --border:rgba(255,255,255,0.08);
+    --bg:#0B0B0C;--bg2:#1B1B1E;--bg3:#26262A;
+    --border:rgba(255,255,255,0.14);
     --accent:#C6F135;--accent2:#a8d120;
     --volei:#FF7A3D;--volei2:#e8642a;
     --text:#F0F0F0;--muted:#888;
     --warn:#fac775;--danger:#ff6b6b;
     --radius:12px;--radius-sm:8px;
     /* escala de tipo: 6 degraus. O de baixo e etiqueta, em maiusculas. */
-    --t-display:40px;--t-title:24px;--t-value:20px;--t-body:15px;--t-sub:13px;--t-label:11px;
+    --t-display:28px;--t-title:20px;--t-value:18px;--t-body:15px;--t-sub:13px;--t-label:11px;
     /* escala de espaco: um ritmo so */
     --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;
   }
@@ -75,16 +75,16 @@
   .page.active{display:block;}
 
   /* CARDS */
-  .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:8px;}
   .card-title{font-size:var(--t-label);font-weight:600;letter-spacing:0.6px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
-  .card-value{font-size:var(--t-display);font-weight:900;letter-spacing:-1.5px;line-height:1;}
-  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+  .card-value{font-size:var(--t-display);font-weight:800;letter-spacing:-0.8px;line-height:1;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
 
-  .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;margin-top:8px;}
+  .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;margin-top:16px;}
   .section-head h2{font-size:var(--t-title);font-weight:800;letter-spacing:-0.5px;}
   /* secao dentro da tela: rotulo, nao titulo */
-  .section-head.sub h2{font-size:var(--t-label);font-weight:600;letter-spacing:0.6px;text-transform:uppercase;color:var(--muted);}
+  .section-head.sub h2{font-size:var(--t-sub);font-weight:600;color:var(--muted);}
   .btn-add{background:transparent;color:var(--text);border:1px solid var(--border);border-radius:99px;padding:8px 16px;font-size:var(--t-label);font-weight:600;cursor:pointer;}
   .btn-add:hover{border-color:var(--accent);color:var(--accent);}
   .btn-sm{background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-size:13px;font-weight:500;cursor:pointer;}
@@ -93,7 +93,7 @@
   .btn-add.volei{background:transparent;color:var(--volei);border-color:rgba(255,122,61,0.4);}
   .btn-add.volei:hover{border-color:var(--volei);color:var(--volei);}
 
-  .workout-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;cursor:pointer;transition:border-color .15s;}
+  .workout-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:8px;cursor:pointer;transition:border-color .15s;}
   .workout-card:hover{border-color:rgba(198,241,53,0.3);}
   .workout-card.volei{border-left:3px solid var(--volei);}
   .wc-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;}
@@ -225,7 +225,7 @@
   .card-lbl{font-size:var(--t-label);font-weight:600;letter-spacing:0.6px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
   .txt-sub{font-size:var(--t-sub);color:var(--muted);}
   .hint{font-size:var(--t-sub);color:var(--muted);margin-bottom:16px;}
-  .empty-icon{font-size:var(--t-display);line-height:1;}
+  .empty-icon{font-size:32px;line-height:1;}
 
   /* MUSCLE STATUS */
   .muscle-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
