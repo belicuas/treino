@@ -66,6 +66,13 @@
   .btn-logout{font-size:13px;color:var(--muted);background:none;border:1px solid var(--border);padding:8px 12px;border-radius:99px;cursor:pointer;}
   .btn-logout:hover{color:var(--text);}
 
+  /* Em tela de toque a barra de rolagem so ocupa espaco: o dedo ja rola e o
+     sistema desenha a sua quando precisa. Some a decoracao, nao a rolagem. */
+  @media (pointer:coarse){
+    .modal, body, #app-screen{scrollbar-width:none;-ms-overflow-style:none;}
+    .modal::-webkit-scrollbar, body::-webkit-scrollbar, #app-screen::-webkit-scrollbar{width:0;height:0;display:none;}
+  }
+
   /* NAV */
   .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;z-index:10;padding-bottom:env(safe-area-inset-bottom);}
   .nav-item{flex:1;padding:12px 0 12px;text-align:center;cursor:pointer;color:var(--muted);font-size:11px;border:none;background:none;transition:color .15s;position:relative;}
@@ -215,7 +222,7 @@
   .item-ex.atual{color:var(--accent);}
   .item-ex-nome{flex:1;font-size:var(--t-body);font-weight:600;}
   .item-ex-meta{font-size:var(--t-sub);color:var(--muted);white-space:nowrap;}
-  #lista-ex{max-height:50vh;overflow-y:auto;margin-bottom:12px;}
+  #lista-ex{margin-bottom:12px;}
 
   /* POR EXERCÍCIO: resumo e lista de vezes que ele foi feito */
   .ex-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
