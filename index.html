@@ -199,9 +199,23 @@
   .chart-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
   svg.chart{width:100%;height:auto;display:block;}
   .chart-empty{text-align:center;color:var(--muted);font-size:13px;padding:32px 0;}
-  .exercise-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
-  .ex-pill{font-size:13px;padding:8px 12px;border-radius:99px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);cursor:pointer;white-space:nowrap;}
-  .ex-pill.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
+  .seletor-ex{display:flex;align-items:center;gap:8px;width:100%;background:var(--bg2);
+    border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:8px;
+    color:var(--text);font-family:inherit;cursor:pointer;text-align:left;}
+  .seletor-ex:hover{border-color:var(--accent);}
+  .seletor-ex-nome{font-size:var(--t-value);font-weight:700;letter-spacing:-0.3px;flex:1;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .seletor-ex-troca{font-size:var(--t-label);font-weight:600;letter-spacing:0.6px;
+    text-transform:uppercase;color:var(--muted);}
+  .seletor-ex .ico{color:var(--muted);}
+  .item-ex{display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:none;
+    border-bottom:1px solid var(--border);padding:14px 4px;color:var(--text);font-family:inherit;
+    cursor:pointer;text-align:left;}
+  .item-ex:last-child{border-bottom:none;}
+  .item-ex.atual{color:var(--accent);}
+  .item-ex-nome{flex:1;font-size:var(--t-body);font-weight:600;}
+  .item-ex-meta{font-size:var(--t-sub);color:var(--muted);white-space:nowrap;}
+  #lista-ex{max-height:50vh;overflow-y:auto;margin-bottom:12px;}
 
   /* POR EXERCÍCIO: resumo e lista de vezes que ele foi feito */
   .ex-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
@@ -240,6 +254,10 @@
   .linha-nav-conta{font-size:var(--t-label);font-weight:700;color:#000;background:var(--accent);
     padding:2px 8px;border-radius:99px;}
   .linha-nav-seta{color:var(--muted);margin-left:auto;}
+  .evo{font-size:var(--t-label);font-weight:600;padding:2px 8px;border-radius:99px;white-space:nowrap;}
+  .evo-sobe{background:rgba(99,153,34,0.2);color:#97c459;}
+  .evo-cai{background:rgba(255,107,107,0.15);color:var(--danger);}
+  .evo-estavel{background:rgba(255,255,255,0.06);color:var(--muted);}
   /* MUSCLE STATUS */
   .muscle-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
   .muscle-row:last-child{border-bottom:none;}
@@ -415,10 +433,13 @@
       <div id="hist-list"></div>
     </div>
     <div id="progress-carga">
-      <input class="hx-filter" id="ex-busca" placeholder="Buscar exercício — ex: supino" oninput="renderProgress()">
-      <div class="exercise-pills" id="exercise-pills"></div>
-      <div id="ex-resumo"></div>
+      <button class="seletor-ex" onclick="abrirSeletorEx()">
+        <span class="seletor-ex-nome" id="ex-atual">—</span>
+        <span class="seletor-ex-troca">trocar</span>
+        <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
       <div class="chart-box"><div id="load-chart"></div></div>
+      <div id="ex-resumo"></div>
       <div id="load-history"></div>
     </div>
   </div>
@@ -431,7 +452,6 @@
       <button class="seg" onclick="switchCorpoTab('peso')">Peso corporal</button>
     </div>
     <div id="corpo-musculos">
-    <div id="muscle-alerts"></div>
     <div class="card">
       <div style="font-size:13px;font-weight:600;margin-bottom:4px">Calendário do mês</div>
       <div style="font-size:11px;color:var(--muted);margin-bottom:12px" id="cal-month-label"></div>
@@ -613,6 +633,17 @@
 
 <!-- MODAL amigo -->
 <!-- MODAL registrar treino passado (esqueci de marcar) -->
+<!-- MODAL escolher exercício -->
+<div class="modal-overlay" id="modal-escolher-ex">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Escolher exercício</div>
+    <input type="text" class="hx-filter" id="ex-busca" placeholder="Buscar — ex: supino" oninput="renderListaEx()" autocomplete="off">
+    <div id="lista-ex"></div>
+    <button class="btn-cancel" onclick="closeModal('modal-escolher-ex')">Fechar</button>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-past">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -1217,16 +1248,40 @@ function getMuscleAlerts(user){
   return alerts.sort((a,b)=>(b.days===null?999:b.days)-(a.days===null?999:a.days));
 }
 
+// Para onde cada musculo esta indo: volume das ultimas 2 semanas contra as 2
+// anteriores. O volume da sessao e dividido entre os musculos que ela ativa --
+// atribuir o total a cada um inflaria tudo.
+function evolucaoMuscular(user){
+  const corte1=daysAgo(14), corte2=daysAgo(28);
+  const recente={}, anterior={};
+  (user.completedSessions||[]).forEach(s=>{
+    const ms=musclesOf(s);
+    if(!ms.length||!s.date) return;
+    const alvo = s.date>=corte1 ? recente : (s.date>=corte2 ? anterior : null);
+    if(!alvo) return;
+    const parcela=(s.volume||0)/ms.length;
+    ms.forEach(m=>{ alvo[m]=(alvo[m]||0)+parcela; });
+  });
+  const saida={};
+  MUSCLES.forEach(m=>{
+    const r=recente[m]||0, a=anterior[m]||0;
+    if(r===0&&a===0)      saida[m]={estado:'parado', pct:null};
+    // sem as 2 semanas anteriores nao ha com o que comparar: melhor nao
+    // fingir um indicador do que mostrar um que nao mede nada
+    else if(a===0)        saida[m]={estado:'novo',   pct:null};
+    else if(r===0)        saida[m]={estado:'cai',    pct:-100};
+    else {
+      const pct=Math.round((r-a)/a*100);
+      saida[m]= pct>=15 ? {estado:'sobe',pct} : pct<=-15 ? {estado:'cai',pct} : {estado:'estavel',pct};
+    }
+  });
+  return saida;
+}
+
 // ===== AGENDA =====
 function renderAgenda(){
   const user=getUsers()[currentUser()];
-  const alerts=getMuscleAlerts(user);
-  const voleiA=alerts.filter(a=>a.volei), normalA=alerts.filter(a=>!a.volei);
-  document.getElementById('muscle-alerts').innerHTML =
-    (voleiA.length?`<div class="alert-card volei"><div class="alert-title">Músculos essenciais do vôlei parados</div>${voleiA.map(a=>`<div class="alert-item">${a.muscle} — <strong>${a.days===null?'nunca treinado':a.days+(a.days===1?' dia':' dias')}</strong>${a.days===null?'':` (ideal a cada ${a.limit})`}</div>`).join('')}</div>`:'') +
-    (normalA.length?`<div class="alert-card"><div class="alert-title"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="16" x2="12" y2="16"/></svg> Músculos há muito tempo sem treino</div>${normalA.map(a=>`<div class="alert-item">${a.muscle} — <strong>${a.days===null?'nunca treinado':a.days+(a.days===1?' dia':' dias')}</strong></div>`).join('')}</div>`:'') +
-    (!alerts.length?`<div class="card" style="text-align:center;color:#97c459;font-size:13px;padding:24px">✓ Todos os músculos em dia!</div>`:'');
-
+  const evo=evolucaoMuscular(user);
   // calendário
   const now=new Date();
   const year=now.getFullYear(),month=now.getMonth();
@@ -1257,9 +1312,16 @@ function renderAgenda(){
     else if(d>=limit){color='var(--danger)';txt=d+(d===1?' dia':' dias');}
     else if(d>=limit-2){color='var(--warn)';txt=d+(d===1?' dia':' dias');}
     else {txt=d===0?'hoje':d+(d===1?' dia':' dias');}
+    // para onde esse musculo esta indo, comparado com as 2 semanas anteriores
+    const e=evo[m]||{estado:'parado',pct:null};
+    const chip = e.estado==='sobe'    ? `<span class="evo evo-sobe">+${e.pct}%</span>`
+               : e.estado==='cai'     ? `<span class="evo evo-cai">${e.pct}%</span>`
+               : e.estado==='estavel' ? '<span class="evo evo-estavel">estável</span>'
+               : '';
     return `<div class="muscle-row">
       <div class="muscle-dot" style="background:${color}"></div>
       <div class="muscle-name">${m}${VOLEI_ESSENTIAL[m]?'<span class="tag-volei-mini">vôlei</span>':''}</div>
+      ${chip}
       <div class="muscle-days" style="color:${color}">${txt}</div>
     </div>`;
   }).join('');
@@ -2000,21 +2062,15 @@ function renderProgress(){
     const ua=porNome[a][porNome[a].length-1].date||'', ub=porNome[b][porNome[b].length-1].date||'';
     return ub.localeCompare(ua);
   });
-  const campo=document.getElementById('ex-busca');
-  const busca=(campo&&campo.value||'').trim().toLowerCase();
-  const nomes=busca?todos.filter(n=>n.toLowerCase().includes(busca)):todos;
-  if(!selectedExercise||!porNome[selectedExercise]||(busca&&nomes.length&&!nomes.includes(selectedExercise))){
-    selectedExercise=nomes[0]||(busca?null:todos[0])||null;
-  }
+  if(!selectedExercise||!porNome[selectedExercise]) selectedExercise=todos[0]||null;
 
-  document.getElementById('exercise-pills').innerHTML = nomes.length
-    ? nomes.map(n=>`<div class="ex-pill ${n===selectedExercise?'active':''}" onclick="selectExercise('${jsStr(n)}')">${n} <span style="opacity:.6">${porNome[n].length}</span></div>`).join('')
-    : `<div class="txt-sub">${todos.length?'Nenhum exercício com esse nome.':'Finalize um treino para o histórico por exercício aparecer aqui.'}</div>`;
+  // o seletor mostra onde voce esta; a lista inteira mora dentro dele
+  document.getElementById('ex-atual').textContent = selectedExercise || 'Nenhum exercício ainda';
 
   const boxResumo=document.getElementById('ex-resumo');
   if(!selectedExercise){
     boxResumo.innerHTML='';
-    document.getElementById('load-chart').innerHTML='<div class="chart-empty">Sem dados de carga ainda.</div>';
+    document.getElementById('load-chart').innerHTML='<div class="chart-empty">Finalize um treino para ver seu progresso por exercício.</div>';
     document.getElementById('load-history').innerHTML='';
     renderWeight();
     const ph0=document.getElementById('progress-historico');
@@ -2090,7 +2146,43 @@ function renderProgress(){
   const ph=document.getElementById('progress-historico');
   if(ph && ph.style.display!=='none') renderHistorico();
 }
-function selectExercise(n){selectedExercise=n;renderProgress();}
+function selectExercise(n){
+  selectedExercise=n;
+  closeModal('modal-escolher-ex');
+  renderProgress();
+}
+
+// a lista de exercicios nao fica jogada na tela: voce abre quando quer trocar
+function abrirSeletorEx(){
+  const b=document.getElementById('ex-busca');
+  if(b) b.value='';
+  renderListaEx();
+  document.getElementById('modal-escolher-ex').classList.add('open');
+  setTimeout(()=>{ if(b) b.focus(); },80);
+}
+
+function renderListaEx(){
+  const user=getUsers()[currentUser()];
+  const porNome=exRegistros(user);
+  const busca=(document.getElementById('ex-busca')?.value||'').trim().toLowerCase();
+  const nomes=Object.keys(porNome).filter(x=>porNome[x].length)
+    .filter(x=>!busca||x.toLowerCase().includes(busca))
+    .sort((a,b)=>{
+      const ua=porNome[a][porNome[a].length-1].date||'', ub=porNome[b][porNome[b].length-1].date||'';
+      return ub.localeCompare(ua);   // o que voce treinou por ultimo vem primeiro
+    });
+  document.getElementById('lista-ex').innerHTML = nomes.length
+    ? nomes.map(x=>{
+        const regs=porNome[x], ultimo=regs[regs.length-1];
+        const dias=ultimo.date?daysBetween(ultimo.date,todayStr()):null;
+        const quando = dias===0?'hoje':dias===1?'ontem':dias!==null?dias+' dias':'';
+        return `<button class="item-ex ${x===selectedExercise?'atual':''}" onclick="selectExercise('${jsStr(x)}')">
+          <span class="item-ex-nome">${x}</span>
+          <span class="item-ex-meta">${regs.length}× · ${quando}</span>
+        </button>`;
+      }).join('')
+    : `<div class="txt-sub" style="padding:16px 0">${busca?'Nenhum exercício com esse nome.':'Finalize um treino para os exercícios aparecerem aqui.'}</div>`;
+}
 
 // mesmo nome, exercícios diferentes: renomear só nesta sessão separa as curvas
 function exRenomear(sid,nome){
