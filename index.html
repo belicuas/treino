@@ -68,9 +68,10 @@
 
   /* Em tela de toque a barra de rolagem so ocupa espaco: o dedo ja rola e o
      sistema desenha a sua quando precisa. Some a decoracao, nao a rolagem. */
-  @media (pointer:coarse){
-    .modal, body, #app-screen{scrollbar-width:none;-ms-overflow-style:none;}
-    .modal::-webkit-scrollbar, body::-webkit-scrollbar, #app-screen::-webkit-scrollbar{width:0;height:0;display:none;}
+  @media (pointer:coarse), (hover:none){
+    /* o documento e quem rola a pagina; o resto pega qualquer container */
+    html, body, *{scrollbar-width:none;-ms-overflow-style:none;}
+    html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar{width:0;height:0;display:none;}
   }
 
   /* NAV */
