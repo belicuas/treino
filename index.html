@@ -76,6 +76,17 @@
   html, body, *{scrollbar-width:none;-ms-overflow-style:none;}
   html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar{width:0;height:0;display:none;}
 
+  /* Acao principal ao alcance do polegar, acima da barra de navegacao.
+     Vive dentro de #page-home, entao some sozinha nas outras telas. */
+  /* a bolinha flutua sobre o conteudo: a Inicio reserva a altura dela para
+     o ultimo card conseguir rolar por baixo em vez de ficar coberto */
+  #page-home{padding-bottom:calc(152px + env(safe-area-inset-bottom));}
+  .fab{position:fixed;right:16px;bottom:calc(88px + env(safe-area-inset-bottom));
+    width:56px;height:56px;border-radius:50%;background:var(--accent);color:#000;border:none;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:20;
+    box-shadow:0 6px 20px rgba(0,0,0,0.45);}
+  .fab:active{background:var(--accent2);}
+
   /* NAV */
   .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;z-index:10;padding-bottom:env(safe-area-inset-bottom);}
   .nav-item{flex:1;padding:12px 0 12px;text-align:center;cursor:pointer;color:var(--muted);font-size:11px;border:none;background:none;transition:color .15s;position:relative;}
@@ -183,12 +194,6 @@
   .hist-meta{font-size:11px;color:var(--muted);margin-top:4px;}
   .kg-input:focus{border-color:var(--accent);}
 
-  .week-row{display:flex;justify-content:space-between;margin-bottom:24px;}
-  .week-dot{text-align:center;}
-  .week-dot span{font-size:11px;color:var(--muted);display:block;margin-bottom:4px;}
-  .wd{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;margin:0 auto;}
-  .wd.done{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700;}
-  .wd.today{border-color:var(--accent);color:var(--accent);}
 
   .profile-hero{text-align:center;padding:24px 0 16px;}
   .avatar-lg{width:72px;height:72px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#000;margin:0 auto 12px;}
@@ -403,10 +408,7 @@
       <p class="txt-sub">Bem-vindo de volta,</p>
       <p style="font-size:24px;font-weight:900;letter-spacing:-0.5px" id="home-greeting">—</p>
     </div>
-    <div id="home-alerts"></div>
-    <div class="week-row" id="week-dots"></div>
     <div class="grid3" id="home-stats"></div>
-    <button class="btn-main" style="margin-bottom:24px" onclick="openTreinoLivre()"><svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 20 12 6 20" fill="currentColor" stroke="none"/></svg> Começar treino livre</button>
     <div class="section-head sub">
       <h2>Seus modelos</h2>
       <div style="display:flex;gap:8px">
@@ -423,6 +425,10 @@
       </div>
       <div id="recent-list"></div>
     </div>
+    <button class="fab" onclick="openTreinoLivre()" aria-label="Começar treino">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 20 12 7 20"/></svg>
+    </button>
+
     <div id="recent-empty-wrap" style="margin-top:24px;display:none">
       <div class="section-head sub"><h2>Últimos 5 dias</h2>
         <button class="btn-add" onclick="openAddPastWorkout()">+ Esqueci de marcar</button>
@@ -1187,23 +1193,12 @@ function showPage(id){
 function renderHome(){
   const email=currentUser(); const user=getUsers()[email];
   document.getElementById('home-greeting').textContent=user.name.split(' ')[0]+'!';
-  // alertas de músculos parados (resumo no topo)
-  const alerts=getMuscleAlerts(user);
-  const voleiAlerts=alerts.filter(a=>a.volei);
-  document.getElementById('home-alerts').innerHTML = voleiAlerts.length ? `
-    <div class="alert-card volei">
-      <div class="alert-title">Atenção vôlei</div>
-      ${voleiAlerts.slice(0,3).map(a=>`<div class="alert-item">${a.muscle} — ${a.days===null?'nunca treinado':a.days+(a.days===1?' dia':' dias')+' sem treinar'}</div>`).join('')}
-    </div>` : '';
-
-  const days=['D','S','T','Q','Q','S','S'];
-  const today=new Date().getDay();
+  // O alerta de músculos parados e o calendário da semana viviam aqui e na
+  // aba Corpo. Ficaram só lá: repetir a mesma informação em duas telas nao
+  // informa duas vezes, so ocupa a tela onde voce chega para treinar.
   const sessions=user.completedSessions||[];
-  const weekDates=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-today+i);return d.toISOString().split('T')[0];});
-  const doneSet=new Set(sessions.map(s=>s.date));
-  document.getElementById('week-dots').innerHTML=weekDates.map((date,i)=>`
-    <div class="week-dot"><span>${days[i]}</span>
-    <div class="wd ${doneSet.has(date)?'done':(i===today?'today':'')}">${doneSet.has(date)?'✓':''}</div></div>`).join('');
+  const hojeDow=new Date().getDay();
+  const weekDates=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-hojeDow+i);return d.toISOString().split('T')[0];});
   const thisWeek=sessions.filter(s=>weekDates.includes(s.date)).length;
   const thisMonth=sessions.filter(s=>s.date.startsWith(new Date().toISOString().substring(0,7))).length;
   const streak=calcStreak(sessions);
