@@ -943,8 +943,16 @@ function subscribeRealtime(){
   }catch(e){ rtSubscribed=false; }
 }
 
-function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toISOString().split('T')[0];}
-function todayStr(){return new Date().toISOString().split('T')[0];}
+// AAAA-MM-DD no fuso de quem esta usando. toISOString() devolve UTC: no
+// Brasil (UTC-3), das 21h a meia-noite ele ja diz amanha, e o app inteiro
+// passava a contar um dia a frente -- inclusive a lista do "esqueci de
+// marcar", onde "Ontem" apontava para hoje.
+function dataLocal(d){
+  const x=d||new Date();
+  return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');
+}
+function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return dataLocal(d);}
+function todayStr(){return dataLocal();}
 function daysBetween(a,b){return Math.round((new Date(b)-new Date(a))/86400000);}
 
 
@@ -1198,9 +1206,9 @@ function renderHome(){
   // informa duas vezes, so ocupa a tela onde voce chega para treinar.
   const sessions=user.completedSessions||[];
   const hojeDow=new Date().getDay();
-  const weekDates=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-hojeDow+i);return d.toISOString().split('T')[0];});
+  const weekDates=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-hojeDow+i);return dataLocal(d);});
   const thisWeek=sessions.filter(s=>weekDates.includes(s.date)).length;
-  const thisMonth=sessions.filter(s=>s.date.startsWith(new Date().toISOString().substring(0,7))).length;
+  const thisMonth=sessions.filter(s=>s.date.startsWith(dataLocal().substring(0,7))).length;
   const streak=calcStreak(sessions);
   document.getElementById('home-stats').innerHTML=`
     <div class="card"><div class="card-title">Semana</div><div class="card-value">${thisWeek}</div></div>
@@ -1224,7 +1232,7 @@ function calcStreak(sessions){
   if(!sessions.length) return 0;
   const dates=[...new Set(sessions.map(s=>s.date))].sort().reverse();
   let streak=0;const d=new Date();
-  for(let i=0;i<60;i++){const ds=d.toISOString().split('T')[0];if(dates.includes(ds))streak++;else if(streak>0)break;d.setDate(d.getDate()-1);}
+  for(let i=0;i<60;i++){const ds=dataLocal(d);if(dates.includes(ds))streak++;else if(streak>0)break;d.setDate(d.getDate()-1);}
   return streak;
 }
 
@@ -1727,7 +1735,7 @@ function iniciarTreinoLivre(){
 // ===== ÚLTIMOS 5 DIAS (editar/apagar/adicionar) =====
 function lastNDates(n){
   const out=[];
-  for(let i=0;i<n;i++){ const d=new Date(); d.setDate(d.getDate()-i); out.push(d.toISOString().split('T')[0]); }
+  for(let i=0;i<n;i++){ const d=new Date(); d.setDate(d.getDate()-i); out.push(dataLocal(d)); }
   return out;
 }
 function renderRecent(){
@@ -1902,7 +1910,7 @@ function histDataLabel(d){
   const hoje=todayStr();
   if(d===hoje) return 'Hoje';
   const ontem=new Date(); ontem.setDate(ontem.getDate()-1);
-  if(d===ontem.toISOString().split('T')[0]) return 'Ontem';
+  if(d===dataLocal(ontem)) return 'Ontem';
   return fmtDate(d);
 }
 
@@ -2801,7 +2809,7 @@ function switchCompareTab(tab){
   document.querySelectorAll('#compare-seg .seg').forEach((s,i)=>s.classList.toggle('active',['volume','idas','peso'][i]===tab));
   renderCompare();
 }
-function monthStart(){const d=new Date();return new Date(d.getFullYear(),d.getMonth(),1).toISOString().split('T')[0];}
+function monthStart(){const d=new Date();return dataLocal(new Date(d.getFullYear(),d.getMonth(),1));}
 function renderCompare(){
   const me=currentUser();const users=getUsers();
   const data=getUserData(me);
