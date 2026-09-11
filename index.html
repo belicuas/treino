@@ -1023,8 +1023,57 @@ function groupLabel(obj){
   return clean[0]+' +'+(clean.length-1);
 }
 // todos os músculos ativados por um treino/sessão (soma de todos os grupos)
+
+// Exercicio -> musculo ALVO. Deliberadamente so o alvo, nao todo musculo que
+// participa: se supino "treina" triceps, o alerta de triceps parado nunca
+// dispara e a agenda muscular para de servir para alguma coisa.
+// A ordem importa -- o primeiro padrao que casar vence, entao o mais
+// especifico vem antes ("crucifixo invertido" antes de "crucifixo").
+// Nome desconhecido nao casa nada e cai no grupo do treino.
+const EXERCICIO_MUSCULOS=[
+  [/crucifixo\s+invertid/,            ['Ombros']],
+  [/eleva(c|ç)ao\s+(de\s+)?pernas?/,  ['Core']],
+  [/eleva(c|ç)ao\s+(lateral|frontal)/, ['Ombros']],
+  [/desenvolvimento|militar|arnold/,  ['Ombros']],
+  [/encolhimento|trapezio/,           ['Trapézio']],
+  [/supino|voador|peck|peitoral/,     ['Peito']],
+  [/crucifixo/,                       ['Peito']],
+  [/mergulho|paralela/,               ['Tríceps']],
+  [/triceps|frances|testa/,           ['Tríceps']],
+  [/rosca|biceps/,                    ['Bíceps']],
+  [/antebra(c|ç)o|punho/,             ['Antebraço']],
+  [/remada|ramada|puxada|barra\s*fixa|pulldown|serrote/, ['Costas']],
+  [/extensora|quadriceps/,            ['Quadríceps']],
+  [/flexora|mesa\s*flexora/,          ['Posterior']],
+  [/stiff|terra|good\s*morning/,      ['Posterior']],
+  [/adutora|abdutora|gluteo|ponte|hip\s*thrust|coice/, ['Glúteos']],
+  [/leg\s*press|agachamento|squat|bulgaro|afundo|avanco|passada/, ['Quadríceps','Glúteos']],
+  [/panturrilha|calf|gemeos/,         ['Panturrilha']],
+  [/salto|jump|pliometr|caixa|box/,   ['Quadríceps','Panturrilha']],
+  [/prancha|abdominal|abdomin|core|obliquo|hollow|russian/, ['Core']],
+  [/esteira|bike|bicicleta|corrida|eliptico|remoergometro|cardio/, ['Core','Quadríceps']]
+];
+
+// tira acento e caixa para o padrao nao depender de como foi digitado
+function semAcento(txt){
+  return String(txt||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+
+function musculosDoExercicio(nome){
+  const t=semAcento(nome);
+  if(!t) return [];
+  for(const [padrao,musculos] of EXERCICIO_MUSCULOS){ if(padrao.test(t)) return musculos; }
+  return [];
+}
+
 function musclesOf(obj){
   const set=new Set();
+  // 1) o que foi realmente feito manda
+  ((obj&&obj.exercises)||[]).forEach(ex=>{
+    musculosDoExercicio(ex&&ex.name).forEach(m=>set.add(m));
+  });
+  if(set.size) return [...set];
+  // 2) sem exercicio reconhecido (registro antigo, nome novo), usa o grupo
   groupsOf(obj).forEach(g=>(GROUP_MUSCLES[g]||[]).forEach(m=>set.add(m)));
   return [...set];
 }
