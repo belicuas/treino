@@ -2220,7 +2220,8 @@ function abrirSeletorEx(){
   if(b) b.value='';
   renderListaEx();
   document.getElementById('modal-escolher-ex').classList.add('open');
-  setTimeout(()=>{ if(b) b.focus(); },80);
+  // sem focus() de proposito: no celular o teclado subiria cobrindo a lista
+  // que voce abriu para ver. Quem quiser filtrar toca no campo.
 }
 
 function renderListaEx(){
